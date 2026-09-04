@@ -18,7 +18,7 @@
     "factory": "bash scripts/boot-factory.sh",
     "wa:register": "tsx scripts/register-whatsapp-webhook.ts",
     "stripe:skus": "tsx scripts/stripe-sync-skus.ts",
-    "test": "tsx --test src/lib/fiche/*.test.ts src/lib/catalog.test.ts src/lib/rosalia/*.test.ts src/lib/pipeline.test.ts"
+    "test": "tsx --test src/lib/fiche/*.test.ts src/lib/catalog.test.ts src/lib/rosalia/*.test.ts src/lib/pipeline.test.ts src/lib/whatsapp-send.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -53,13 +53,19 @@ export function parseTurn(raw: string): { route: string; reply: string } | null 
   const cleaned = raw.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
-  if (start < 0 || end <= start) return null;
+  if (start < 0 || end <= start) {
+    if (cleaned && !cleaned.startsWith("{")) return { route: "hello", reply: cleaned };
+    return null;
+  }
   try {
     const parsed = JSON.parse(cleaned.slice(start, end + 1)) as { route?: string; reply?: string };
     const route = String(parsed.route ?? "").trim();
-    if (!route) return null;
-    return { route, reply: String(parsed.reply ?? "").trim() };
+    const reply = String(parsed.reply ?? "").trim();
+    if (reply) return { route: route || "hello", reply };
+    if (route) return { route, reply: "" };
+    return null;
   } catch {
+    if (cleaned && !cleaned.startsWith("{")) return { route: "hello", reply: cleaned };
     return null;
   }
 }

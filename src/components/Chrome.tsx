@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export function OutboundBanner() {
   return (
     <div className="bg-ink text-paper px-4 py-2 text-xs tracking-wide flex items-center justify-between gap-3">
-      <span>OUTBOUND_ENABLED=false — SMTP / SMS off. Zoho et WhatsApp : allowlist seulement.</span>
+      <span>OUTBOUND_ENABLED=false — SMTP / SMS off. Zoho : allowlist. WhatsApp Fil Babyrock : ouvert.</span>
       <span className="opacity-70">Publier = dry-run, sauf fiche à nous avec publish_live.</span>
     </div>
   );

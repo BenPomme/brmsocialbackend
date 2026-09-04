@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { classifyInbound } from "../classify-inbound";
-import { coerceRoute, repeats } from "./route";
+import { coerceRoute, parseTurn, repeats } from "./route";
 
 /** Prod 16:43: model said hello; coerceRoute sent onboard_wait. */
 test("hello? anyone? on wait_google is not rewritten to onboard_wait", () => {
@@ -26,4 +26,13 @@ test("repeats blocks sending the same WhatsApp twice", () => {
     "Step 3: invite reviews@babyrock.ai (paste the email exactly). Not your password. Reply YES when it’s pasted.";
   assert.equal(repeats(blob, [blob]), true);
   assert.equal(repeats("Something else entirely about hours.", [blob]), false);
+});
+
+test("prose without JSON is still a WhatsApp reply", () => {
+  const t = parseTurn(
+    "Hola, ¿qué tal? BabyRock Social te ayuda a mejorar tu visibilidad en Google con reseñas.",
+  );
+  assert.ok(t);
+  assert.equal(t!.route, "hello");
+  assert.match(t!.reply, /BabyRock Social/);
 });

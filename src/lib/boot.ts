@@ -26,7 +26,7 @@ export function printBootChecklist() {
     "",
     "  Refusing outbound workers:",
     `    ${OUTBOUND_JOB_KINDS.join(", ")}`,
-    "  Zoho Mail (rosalia@) can send only to OUTREACH_ALLOWLIST. SMTP / WA / SMS off.",
+    "  Zoho Mail (rosalia@) can send only to OUTREACH_ALLOWLIST. SMTP / SMS off. WhatsApp auto-reply is open unless WHATSAPP_ALLOWLIST lists numbers.",
     "  Publish writes the DB and logs dry-run unless publish_live=true",
     "  AND manager_invite_status=accepted AND GBP write is wired (it is not).",
     "",

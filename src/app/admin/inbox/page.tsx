@@ -111,7 +111,7 @@ export default function AdminInboxPage() {
     });
     const data = await res.json();
     setBusy(null);
-    setNotice(res.ok ? "WhatsApp envoyé (allowlist)." : data.error ?? "échec");
+    setNotice(res.ok ? "WhatsApp envoyé." : data.error ?? "échec");
     if (res.ok) setDraftEdit("");
     await refresh();
   }
@@ -256,7 +256,7 @@ export default function AdminInboxPage() {
                       {draft?.payload && typeof draft.payload === "object" && "source" in draft.payload
                         ? ` · ${String((draft.payload as { source?: string }).source)}`
                         : ""}
-                      . Fil natif : allowlist = envoi auto. Script OK/STOP/n° sans modèle. FAQ = Grok sans raisonnement. Hors script → humain.
+                      . Fil WhatsApp : envoi auto. Hors script → humain.
                     </p>
                     <textarea
                       className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm min-h-[8rem]"

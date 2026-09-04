@@ -8,15 +8,26 @@ export function digitsOnly(value: string) {
   return value.replace(/\D/g, "");
 }
 
+function allowlistRaw() {
+  return read("WHATSAPP_ALLOWLIST") ?? "";
+}
+
+/** Empty / * / all / open = anyone. Otherwise comma-separated E.164 digits. */
+export function whatsappAllowlistOpen() {
+  const t = allowlistRaw().trim().toLowerCase();
+  return t === "" || t === "*" || t === "all" || t === "open";
+}
+
 export function whatsappAllowlist(): string[] {
-  const raw = read("WHATSAPP_ALLOWLIST") ?? "";
-  return raw
+  if (whatsappAllowlistOpen()) return [];
+  return allowlistRaw()
     .split(",")
     .map((s) => digitsOnly(s))
     .filter((s) => s.length >= 9);
 }
 
 export function isWhatsappAllowlisted(to: string) {
+  if (whatsappAllowlistOpen()) return true;
   const d = digitsOnly(to);
   return whatsappAllowlist().some((n) => n === d || d.endsWith(n) || n.endsWith(d));
 }
