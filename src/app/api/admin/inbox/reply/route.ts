@@ -8,12 +8,18 @@ export async function POST(req: Request) {
 
   const body = (await req.json()) as {
     threadId?: string;
-    action?: "propose" | "send";
+    action?: "propose" | "send" | "pause" | "release";
     text?: string;
   };
   const threadId = (body.threadId ?? "").trim();
-  const action = body.action === "send" ? "send" : "propose";
+  const action = body.action === "send" ? "send" : body.action === "pause" ? "pause" : body.action === "release" ? "release" : "propose";
   if (!threadId) return NextResponse.json({ error: "threadId requis" }, { status: 400 });
+
+  if (action === "pause" || action === "release") {
+    const { prisma } = await import("@/lib/db");
+    await prisma.inboxThread.update({ where: { id: threadId }, data: { humanPaused: action === "pause" } });
+    return NextResponse.json({ ok: true, humanPaused: action === "pause" });
+  }
 
   if (action === "propose") {
     const proposed = await proposeRosaliaReply(threadId);

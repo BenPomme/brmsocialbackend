@@ -111,10 +111,12 @@ export function talkPrompt(opts: {
 Language: ${langName}. Two or three short sentences. No "Step N". No "Reply YES when…". No "I'll pass this to a colleague" unless you truly cannot help.
 Facts (never invent others): BabyRock Social = Google review replies, ${opts.monthLabel}/month.${year} Invite ${opts.managerEmail} as Manager, not Owner, no password. Direct / Instagram / SEO are not for sale. Pay link only if they need it: ${opts.payUrl}. ${google}
 Where you are: phase ${opts.phase}, gestor ${opts.step ?? "none"} (maps → people → email → role → wait). If they just confirmed this step, set route to "${next}".
+Tools (optional, server will execute; you cannot grant payment or Google access): get_catalog_quote, create_checkout, get_invoice, cancel_service, create_support_case. Set "tool" and "args" when you need a fact.
 If they ask something else, answer it, then one line on the next useful action.
-If you don't know, or a person must decide, set route "human" and keep reply to one short acknowledgement.
+If you don't know, or a person must decide, set route "human", tool "create_support_case", and keep reply to one short acknowledgement.
+JSON may include locale (BCP-47), intent, tool, args.
 Do not repeat or paraphrase your last message:
 ${opts.lastOut || "(none)"}
-JSON only: {"route":"<script id or human>","reply":"<the exact WhatsApp text>"}.
+JSON only: {"route":"<script id or human>","reply":"<the exact WhatsApp text>","locale":"<bcp-47>","intent":"<short>","tool":null,"args":{}}.
 reply is required and is what they read.`;
 }

@@ -5,14 +5,19 @@ import { quoteFor, resolveQuoteCity } from "./catalog";
 import { isSantCugat } from "./offers";
 import { prisma } from "./db";
 import { extractSpokenName, personFirstName } from "./language";
-import { xaiFastModel, xaiText } from "./xai";
+import { xaiComplete, xaiFastModel } from "./xai";
 import { isWhatsappAllowlisted, sendWhatsappText } from "./whatsapp-send";
 import { isAllowlisted, sendZohoMail } from "./zoho-mail";
 import { classifyInbound } from "./classify-inbound";
 import { hasScript } from "./rosalia/copy";
 import { decideRosalia, decisionFromScript, shouldSendNow } from "./rosalia/decide";
 import { guessLocale } from "./rosalia/lang";
-import { coerceRoute, isRoutable, nextOnboard, parseTurn, repeats, talkPrompt } from "./rosalia/route";
+import { coerceRoute, isRoutable, nextOnboard, repeats, talkPrompt } from "./rosalia/route";
+import { parseStructuredTurn } from "./rosalia/turn";
+import { runRosaliaTool } from "./rosalia/tools";
+import { stripUngroundedClaims } from "./rosalia/claims";
+import { estimateCostUsd, MAX_PROVIDER_CALLS, PRICING_TABLE_VERSION, TASK_COST_CEILING_USD } from "./rosalia/pricing";
+import { isPaidClient } from "./billing-state";
 import type { ConvoLang, RosaliaEvent, ThreadPhase, OnboardingStep } from "./rosalia/types";
 
 export { wantsPayLink } from "./rosalia/decide";
@@ -182,48 +187,50 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
   if (alreadyStopped && event.type === "inbound_text" && classifyInbound(event.text) !== "stop") {
     decided = decisionFromScript("fallback", decideOpts);
     replySource = "off_script";
+  } else if (thread.humanPaused && event.type === "inbound_text" && classifyInbound(event.text) !== "stop") {
+    decided = decisionFromScript("fallback", decideOpts);
+    replySource = "off_script";
   } else if (!hard && event.type === "inbound_text") {
     const session = sessionSlice(thread.messages);
     const historyLines = session
       .filter((m) => m.direction !== "draft")
       .slice(-8)
       .map((m) => `${m.direction === "in" ? "ellos" : "rosalia"}: ${m.body}`);
+    const memory = thread.summary ? `Known facts:\n${thread.summary}\n\n` : "";
     const quote = quoteFor({ city, inbound: event.text });
-    const promptLang = guessLocale(event.text, rememberedLang);
+    const promptLang = guessLocale(event.text, thread.preferredLocale ?? rememberedLang);
+    const prompt = talkPrompt({
+      lang: promptLang,
+      phase: asPhase(thread.phase),
+      step: asStep(thread.onboardingStep),
+      monthLabel: quote.monthLabel,
+      yearLabel: quote.yearLabel,
+      managerEmail: quote.managerEmail,
+      payUrl: link,
+      lastOut: allOutbound.at(-1) ?? null,
+      managerInviteStatus: client?.managerInviteStatus ?? null,
+    });
+    const userBlock = `${memory}History:\n${historyLines.join("\n") || "(empty)"}\n\nInbound:\n${event.text}`;
     try {
-      const raw = await xaiText(
-        talkPrompt({
-          lang: promptLang,
-          phase: asPhase(thread.phase),
-          step: asStep(thread.onboardingStep),
-          monthLabel: quote.monthLabel,
-          yearLabel: quote.yearLabel,
-          managerEmail: quote.managerEmail,
-          payUrl: link,
-          lastOut: allOutbound.at(-1) ?? null,
-          managerInviteStatus: client?.managerInviteStatus ?? null,
-        }),
-        `History:\n${historyLines.join("\n") || "(empty)"}\n\nInbound:\n${event.text}`,
-        { model: xaiFastModel(), maxTokens: 280, temperature: 0.4, reasoning: "none" },
-      );
-      let parsed = parseTurn(raw ?? "");
+      let calls = 0;
+      let cost = 0;
+      const call = async (user: string) => {
+        if (calls >= MAX_PROVIDER_CALLS || cost >= TASK_COST_CEILING_USD) return null;
+        calls += 1;
+        const r = await xaiComplete(prompt, user, {
+          model: xaiFastModel(),
+          maxTokens: 500,
+          temperature: 0.4,
+          reasoning: "none",
+        });
+        if (r) cost += estimateCostUsd(r.promptTokens, r.completionTokens);
+        return r;
+      };
+      const first = await call(userBlock);
+      let parsed = parseStructuredTurn(first?.content ?? "");
       if (!parsed?.reply || repeats(parsed.reply, allOutbound)) {
-        const retry = await xaiText(
-          talkPrompt({
-            lang: promptLang,
-            phase: asPhase(thread.phase),
-            step: asStep(thread.onboardingStep),
-            monthLabel: quote.monthLabel,
-            yearLabel: quote.yearLabel,
-            managerEmail: quote.managerEmail,
-            payUrl: link,
-            lastOut: allOutbound.at(-1) ?? null,
-            managerInviteStatus: client?.managerInviteStatus ?? null,
-          }),
-          `History:\n${historyLines.join("\n") || "(empty)"}\n\nInbound:\n${event.text}\n\nWrite a NEW WhatsApp reply. reply must not be empty.`,
-          { model: xaiFastModel(), maxTokens: 280, temperature: 0.4, reasoning: "none" },
-        );
-        parsed = parseTurn(retry ?? "") ?? parsed;
+        const retry = await call(`${userBlock}\n\nWrite a NEW WhatsApp reply. reply must not be empty.`);
+        parsed = parseStructuredTurn(retry?.content ?? "") ?? parsed;
       }
       const route = coerceRoute(
         parsed?.route ?? "human",
@@ -231,28 +238,48 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
         event.text,
         asPhase(thread.phase),
       );
-      const spoken = (parsed?.reply ?? "").trim();
-      console.log("rosalia route", { inbound: event.text.slice(0, 80), raw: (raw ?? "").slice(0, 120), route });
+      let spoken = (parsed?.reply ?? "").trim();
+      let toolName = parsed?.tool ?? (route === "human" ? "create_support_case" : null);
+      if (toolName) {
+        const toolOut = await runRosaliaTool(toolName, parsed?.args ?? {}, {
+          threadId: thread.id,
+          clientId: client?.id ?? null,
+          counterparty: thread.counterparty,
+          knownCity: city,
+          inbound: event.text,
+          actor: "rosalia",
+          payUrlFor: (c) => payUrl({ wa: thread.counterparty, city: c }),
+        });
+        spoken = spoken || toolOut.speak;
+        if (toolName === "get_catalog_quote" || toolName === "create_checkout") {
+          spoken = spoken.includes(toolOut.fact.checkoutUrl as string)
+            ? spoken
+            : `${spoken}\n${toolOut.speak}`.trim();
+        }
+      }
+      spoken = stripUngroundedClaims(spoken, {
+        paid: isPaidClient(client),
+        published: false,
+        googleConnected: client?.managerInviteStatus === "accepted",
+      });
+      console.log("rosalia route", { inbound: event.text.slice(0, 80), route, tool: toolName, locale: parsed?.locale });
       const base = decisionFromScript(
         route === "human" || !isRoutable(route) || !hasScript(route) ? "fallback" : route,
         decideOpts,
       );
+      const detected = parsed?.locale || promptLang;
       if (route === "human" || route === "fallback") {
         decided = { ...base, status: "needs_human", source: "template", faqId: "human" };
         replySource = "llm";
-        if (client?.id) {
-          await prisma.action.create({
+        if (toolName !== "create_support_case") {
+          await prisma.supportCase.create({
             data: {
-              clientId: client.id,
-              type: "support_case",
-              actor: "rosalia",
-              result: "open",
-              payload: {
-                threadId: thread.id,
-                inbound: event.text.slice(0, 500),
-                modelReply: spoken.slice(0, 700),
-                route,
-              },
+              threadId: thread.id,
+              clientId: client?.id ?? null,
+              category: "human",
+              summary: event.text.slice(0, 400),
+              draftReply: spoken.slice(0, 700),
+              state: "open",
             },
           }).catch(() => null);
         }
@@ -263,6 +290,40 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
         decided = { ...base, source: "off_script", status: "needs_human" };
         replySource = "off_script";
       }
+      const lastCall = first;
+      await prisma.rosaliaTurn.create({
+        data: {
+          threadId: thread.id,
+          inboundMessageId: lastIn?.id ?? null,
+          model: lastCall?.model ?? xaiFastModel(),
+          locale: detected,
+          intent: parsed?.intent ?? route,
+          tool: toolName,
+          promptTokens: lastCall?.promptTokens ?? 0,
+          completionTokens: lastCall?.completionTokens ?? 0,
+          latencyMs: lastCall?.latencyMs ?? 0,
+          costUsd: lastCall ? estimateCostUsd(lastCall.promptTokens, lastCall.completionTokens) : null,
+          pricingVersion: PRICING_TABLE_VERSION,
+          outcome: replySource,
+        },
+      }).catch(() => null);
+      await prisma.inboxThread.update({
+        where: { id: thread.id },
+        data: {
+          detectedLocale: detected,
+          localeConfidence: parsed?.locale ? 0.7 : 0.4,
+          preferredLocale: thread.preferredLocale ?? (detected !== "und" ? detected : null),
+          summary: [
+            `phase=${decideOpts.phase}`,
+            city ? `city=${city}` : null,
+            client ? `billing=${client.status}` : null,
+            `locale=${detected}`,
+          ]
+            .filter(Boolean)
+            .join("; "),
+          summaryThroughId: lastIn?.id ?? thread.summaryThroughId,
+        },
+      }).catch(() => null);
     } catch (e) {
       console.warn("rosalia route", e);
     }
@@ -402,6 +463,7 @@ export async function deliverRosaliaDraft(threadId: string, textOverride?: strin
       direction: "out",
     });
     if (draft) await prisma.inboxMessage.delete({ where: { id: draft.id } }).catch(() => null);
+    await prisma.inboxThread.update({ where: { id: threadId }, data: { humanPaused: true } }).catch(() => null);
     return { channel: "whatsapp" as const, providerId: sent.providerId };
   }
 
@@ -436,7 +498,7 @@ export async function proposeAndMaybeSend(threadId: string, eventOverride?: Rosa
   if (!thread) return { ...proposed, sent: false as const };
 
   const digits = thread.counterparty.replace(/\D/g, "");
-  if (SKIP_AUTO.has(digits) || proposed.source === "off_script") {
+  if (SKIP_AUTO.has(digits) || proposed.source === "off_script" || thread.humanPaused) {
     return { ...proposed, sent: false as const };
   }
   if (!shouldSendNow(proposed.decision, proposed.lastInboundAt)) {

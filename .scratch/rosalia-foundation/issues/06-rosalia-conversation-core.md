@@ -23,12 +23,17 @@ A cheap model returns `{route, reply}`. A nonempty reply is marked `ok` and auto
 - Recent original messages (newest window) are the context. Do not drop them after ten minutes of silence.
 
 **Acceptance criteria:**
-- [ ] German, Arabic and Japanese inbound are not classified as Spanish
-- [ ] Model `{route:"human", reply:"…"}` does not auto-send that reply as resolved; a support case exists
-- [ ] `low_star_ok` applies owner approval for that account
-- [ ] `baja` persists a cancellation action on the Paid Account
-- [ ] `in_business` without Google connection does not set phase `active`
-- [ ] Annual price is available to the talking prompt as a server fact
+- [x] German, Arabic and Japanese inbound are not classified as Spanish
+- [x] Model `{route:"human", reply:"…"}` does not auto-send that reply as resolved; a support case exists
+- [x] `low_star_ok` applies owner approval for that account
+- [x] `baja` persists a cancellation action on the Paid Account
+- [x] `in_business` without Google connection does not set phase `active`
+- [x] Annual price is available to the talking prompt as a server fact
+- [x] Structured tools: get_catalog_quote, create_checkout, get_invoice, cancel_service, create_support_case
+- [x] BCP-47 preferred/detected locale on the thread
+- [x] Durable fact summary + human pause until released
+- [x] Provider timeout, call cap, cost ceiling, turn usage
+- [x] 240 labelled eval cases from spec §11 (deterministic checks; no live Stripe/GBP)
 
 **Out of scope:**
 - 240-scenario eval set and model bake-off

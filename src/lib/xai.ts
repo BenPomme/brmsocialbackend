@@ -1,17 +1,48 @@
 import { xaiKey, xaiModel } from "./env";
+import { PROVIDER_TIMEOUT_MS } from "./rosalia/pricing";
 
 /** Volume FAQ / 4–5★: no chain-of-thought billed as output. Same list price as 4.3, far fewer tokens. */
 export function xaiFastModel() {
   return process.env.XAI_FAST_MODEL?.trim() || "grok-4.20-0309-non-reasoning";
 }
 
+export type LlmCall = {
+  content: string | null;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+  latencyMs: number;
+};
+
 export async function xaiText(
   system: string,
   user: string,
-  opts?: { model?: string; maxTokens?: number; temperature?: number; reasoning?: "none" | "low" | "medium" | "high" },
+  opts?: {
+    model?: string;
+    maxTokens?: number;
+    temperature?: number;
+    reasoning?: "none" | "low" | "medium" | "high";
+    timeoutMs?: number;
+  },
 ): Promise<string | null> {
+  const r = await xaiComplete(system, user, opts);
+  return r?.content ?? null;
+}
+
+export async function xaiComplete(
+  system: string,
+  user: string,
+  opts?: {
+    model?: string;
+    maxTokens?: number;
+    temperature?: number;
+    reasoning?: "none" | "low" | "medium" | "high";
+    timeoutMs?: number;
+  },
+): Promise<LlmCall | null> {
   const key = xaiKey();
   if (!key) return null;
+  const started = Date.now();
   const model = opts?.model ?? xaiModel();
   const reasoning = opts?.reasoning ?? (model.includes("non-reasoning") ? undefined : "none");
   const payload: Record<string, unknown> = {
@@ -25,16 +56,10 @@ export async function xaiText(
   };
   if (reasoning) payload.reasoning_effort = reasoning;
 
-  let res = await fetch("https://api.x.ai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok && reasoning && res.status === 400) {
-    delete payload.reasoning_effort;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), opts?.timeoutMs ?? PROVIDER_TIMEOUT_MS);
+  let res: Response;
+  try {
     res = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -42,7 +67,22 @@ export async function xaiText(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+      signal: ctrl.signal,
     });
+    if (!res.ok && reasoning && res.status === 400) {
+      delete payload.reasoning_effort;
+      res = await fetch("https://api.x.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        signal: ctrl.signal,
+      });
+    }
+  } finally {
+    clearTimeout(timer);
   }
   if (!res.ok) {
     const body = await res.text();
@@ -61,7 +101,13 @@ export async function xaiText(
       total: u.total_tokens,
     });
   }
-  return data.choices?.[0]?.message?.content?.trim() ?? null;
+  return {
+    content: data.choices?.[0]?.message?.content?.trim() ?? null,
+    model,
+    promptTokens: u?.prompt_tokens ?? 0,
+    completionTokens: u?.completion_tokens ?? 0,
+    latencyMs: Date.now() - started,
+  };
 }
 
 export async function xaiFastText(system: string, user: string): Promise<string | null> {

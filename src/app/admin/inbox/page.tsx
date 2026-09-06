@@ -12,6 +12,7 @@ type Thread = {
   subject: string | null;
   status: string;
   phase?: string | null;
+  humanPaused?: boolean;
   lastMessageAt: string;
   lead: { id: string; name: string; city: string | null } | null;
   messages: Msg[];
@@ -113,6 +114,20 @@ export default function AdminInboxPage() {
     setBusy(null);
     setNotice(res.ok ? "WhatsApp envoyé." : data.error ?? "échec");
     if (res.ok) setDraftEdit("");
+    await refresh();
+  }
+
+  async function takeover(action: "pause" | "release") {
+    if (!open) return;
+    setBusy("pause");
+    const res = await fetch("/api/admin/inbox/reply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ threadId: open.id, action }),
+    });
+    const data = await res.json();
+    setBusy(null);
+    setNotice(res.ok ? (action === "pause" ? "Rosalia en pause." : "Rosalia relancée.") : data.error ?? "échec");
     await refresh();
   }
 
@@ -280,6 +295,14 @@ export default function AdminInboxPage() {
                         className="rounded-lg bg-ink text-paper px-3 py-2 text-sm disabled:opacity-60"
                       >
                         {busy === "send" ? "Envoi…" : "Envoyer WhatsApp"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => takeover(open.humanPaused ? "release" : "pause")}
+                        disabled={busy === "pause"}
+                        className="rounded-lg border border-line px-3 py-2 text-sm disabled:opacity-60"
+                      >
+                        {open.humanPaused ? "Reprendre Rosalia" : "Prendre la main"}
                       </button>
                     </div>
                   </div>
