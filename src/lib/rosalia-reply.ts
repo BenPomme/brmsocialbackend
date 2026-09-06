@@ -11,6 +11,7 @@ import { isAllowlisted, sendZohoMail } from "./zoho-mail";
 import { classifyInbound } from "./classify-inbound";
 import { hasScript } from "./rosalia/copy";
 import { decideRosalia, decisionFromScript, shouldSendNow } from "./rosalia/decide";
+import { guessLocale } from "./rosalia/lang";
 import { coerceRoute, isRoutable, nextOnboard, parseTurn, repeats, talkPrompt } from "./rosalia/route";
 import type { ConvoLang, RosaliaEvent, ThreadPhase, OnboardingStep } from "./rosalia/types";
 
@@ -80,15 +81,8 @@ function nameFromThread(thread: {
   return "";
 }
 
-const SESSION_GAP_MS = 10 * 60 * 1000;
-
 function sessionSlice<T extends { createdAt: Date; direction: string }>(messages: T[]) {
-  const real = messages.filter((m) => m.direction !== "draft");
-  let cut = 0;
-  for (let i = 1; i < real.length; i++) {
-    if (real[i].createdAt.getTime() - real[i - 1].createdAt.getTime() > SESSION_GAP_MS) cut = i;
-  }
-  return real.slice(cut);
+  return messages.filter((m) => m.direction !== "draft").slice(-8);
 }
 
 function draftId(threadId: string) {
@@ -195,16 +189,19 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
       .slice(-8)
       .map((m) => `${m.direction === "in" ? "ellos" : "rosalia"}: ${m.body}`);
     const quote = quoteFor({ city, inbound: event.text });
+    const promptLang = guessLocale(event.text, rememberedLang);
     try {
       const raw = await xaiText(
         talkPrompt({
-          lang: rememberedLang ?? "es",
+          lang: promptLang,
           phase: asPhase(thread.phase),
           step: asStep(thread.onboardingStep),
           monthLabel: quote.monthLabel,
+          yearLabel: quote.yearLabel,
           managerEmail: quote.managerEmail,
           payUrl: link,
           lastOut: allOutbound.at(-1) ?? null,
+          managerInviteStatus: client?.managerInviteStatus ?? null,
         }),
         `History:\n${historyLines.join("\n") || "(empty)"}\n\nInbound:\n${event.text}`,
         { model: xaiFastModel(), maxTokens: 280, temperature: 0.4, reasoning: "none" },
@@ -213,13 +210,15 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
       if (!parsed?.reply || repeats(parsed.reply, allOutbound)) {
         const retry = await xaiText(
           talkPrompt({
-            lang: rememberedLang ?? "es",
+            lang: promptLang,
             phase: asPhase(thread.phase),
             step: asStep(thread.onboardingStep),
             monthLabel: quote.monthLabel,
+            yearLabel: quote.yearLabel,
             managerEmail: quote.managerEmail,
             payUrl: link,
             lastOut: allOutbound.at(-1) ?? null,
+            managerInviteStatus: client?.managerInviteStatus ?? null,
           }),
           `History:\n${historyLines.join("\n") || "(empty)"}\n\nInbound:\n${event.text}\n\nWrite a NEW WhatsApp reply. reply must not be empty.`,
           { model: xaiFastModel(), maxTokens: 280, temperature: 0.4, reasoning: "none" },
@@ -238,7 +237,26 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
         route === "human" || !isRoutable(route) || !hasScript(route) ? "fallback" : route,
         decideOpts,
       );
-      if (spoken && !repeats(spoken, allOutbound)) {
+      if (route === "human" || route === "fallback") {
+        decided = { ...base, status: "needs_human", source: "template", faqId: "human" };
+        replySource = "llm";
+        if (client?.id) {
+          await prisma.action.create({
+            data: {
+              clientId: client.id,
+              type: "support_case",
+              actor: "rosalia",
+              result: "open",
+              payload: {
+                threadId: thread.id,
+                inbound: event.text.slice(0, 500),
+                modelReply: spoken.slice(0, 700),
+                route,
+              },
+            },
+          }).catch(() => null);
+        }
+      } else if (spoken && !repeats(spoken, allOutbound)) {
         decided = { ...base, body: spoken.slice(0, 700), source: "template", status: "ok", faqId: route || "llm_reply" };
         replySource = "llm";
       } else {
@@ -303,7 +321,21 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
         },
       });
 
-  if (client && decided.applyClientReply && lastIn && (decided.applyClientReply === "ok" || decided.applyClientReply === "text" || decided.applyClientReply === "cerrado")) {
+  if (client && decided.applyClientReply === "baja") {
+    await prisma.client.update({
+      where: { id: client.id },
+      data: { status: "pause" },
+    });
+    await prisma.action.create({
+      data: {
+        clientId: client.id,
+        type: "billing",
+        actor: "rosalia",
+        result: "ok",
+        payload: { event: "cancel_at_period_end", via: "whatsapp" },
+      },
+    });
+  } else if (client && decided.applyClientReply && lastIn && (decided.applyClientReply === "ok" || decided.applyClientReply === "text" || decided.applyClientReply === "cerrado")) {
     try {
       await handleClientReply({ clientId: client.id, text: lastIn.body, actor: "rosalia" });
     } catch (e) {

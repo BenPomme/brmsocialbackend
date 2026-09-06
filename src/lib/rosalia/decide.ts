@@ -187,8 +187,14 @@ export function decisionFromScript(id: string, input: DecideInput): RosaliaDecis
   } else if (id === "stop" || id === "baja_active") {
     phase = "stopped";
   } else if (id === "in_business") {
-    phase = "active";
-    step = "done";
+    if (input.managerInviteStatus === "accepted") {
+      phase = "active";
+      step = "done";
+    } else {
+      id = "onboard_premature";
+      phase = "onboarding";
+      step = "wait_google";
+    }
   } else if (id === "pay" || id === "ok" || id === "interest" || id === "hello") {
     if (phase === "outreach") phase = "awaiting_pay";
   }
@@ -202,7 +208,8 @@ export function decisionFromScript(id: string, input: DecideInput): RosaliaDecis
     status: id === "stop" || id === "baja_active" ? "stop" : human ? "needs_human" : "ok",
     phase,
     onboardingStep: step,
-    applyClientReply: id === "baja_active" ? "baja" : id === "cerrado" ? "cerrado" : null,
+    applyClientReply:
+      id === "baja_active" ? "baja" : id === "cerrado" ? "cerrado" : id === "low_star_ok" ? "ok" : id === "low_star_text" ? "text" : null,
   });
 }
 

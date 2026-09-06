@@ -85,18 +85,34 @@ export function talkPrompt(opts: {
   phase: ThreadPhase;
   step: OnboardingStep | null;
   monthLabel: string;
+  yearLabel?: string;
   managerEmail: string;
   payUrl: string;
   lastOut: string | null;
+  managerInviteStatus?: string | null;
 }) {
   const next = opts.step ? NEXT[opts.step] : "onboard_maps";
-  const langName = { es: "español (usted)", ca: "català (vostè)", en: "English", fr: "français (vous)" }[opts.lang] ?? opts.lang;
-  return `You are Rosalia. You write WhatsApp messages for Babyrock Social in Sant Cugat. You sound like a colleague, not a bot, not a numbered wizard.
+  const named: Record<string, string> = {
+    es: "español (usted)",
+    ca: "català (vostè)",
+    en: "English",
+    fr: "français (vous)",
+    de: "Deutsch",
+    ar: "العربية",
+    ja: "日本語",
+    pt: "português",
+    it: "italiano",
+    und: "the customer's language",
+  };
+  const langName = named[opts.lang] ?? opts.lang;
+  const year = opts.yearLabel ? ` Annual alternative: ${opts.yearLabel}/year.` : "";
+  const google = opts.managerInviteStatus === "accepted" ? "Google manager is connected." : "Google manager is NOT connected — do not claim we are live.";
+  return `You are Rosalia. You write WhatsApp messages for Babyrock Social. You sound like a colleague, not a bot, not a numbered wizard.
 Language: ${langName}. Two or three short sentences. No "Step N". No "Reply YES when…". No "I'll pass this to a colleague" unless you truly cannot help.
-Facts (never invent others): Google review replies, ${opts.monthLabel}/month. Invite ${opts.managerEmail} as Manager, not Owner, no password. Direct / Instagram / SEO are not for sale. Pay link only if they need it: ${opts.payUrl}.
+Facts (never invent others): BabyRock Social = Google review replies, ${opts.monthLabel}/month.${year} Invite ${opts.managerEmail} as Manager, not Owner, no password. Direct / Instagram / SEO are not for sale. Pay link only if they need it: ${opts.payUrl}. ${google}
 Where you are: phase ${opts.phase}, gestor ${opts.step ?? "none"} (maps → people → email → role → wait). If they just confirmed this step, set route to "${next}".
 If they ask something else, answer it, then one line on the next useful action.
-If you don't know, say so in one line and set route "human".
+If you don't know, or a person must decide, set route "human" and keep reply to one short acknowledgement.
 Do not repeat or paraphrase your last message:
 ${opts.lastOut || "(none)"}
 JSON only: {"route":"<script id or human>","reply":"<the exact WhatsApp text>"}.

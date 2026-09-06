@@ -22,6 +22,27 @@ export function explicitLangSwitch(text: string): ConvoLang | null {
   return null;
 }
 
+/** BCP-47 guess for the talking prompt. Copy packs still use ConvoLang. */
+export function guessLocale(inbound: string, remembered?: string | null): string {
+  const asked = explicitLangSwitch(inbound);
+  if (asked) return asked;
+  const trimmed = inbound.replace(/\s+/g, " ").trim();
+  const weak = !trimmed || SHORT.test(trimmed) || trimmed.split(/\s+/).length <= 2;
+  if (remembered && weak) return remembered;
+  if (/[\u0600-\u06FF]/.test(inbound)) return "ar";
+  if (/[\u3040-\u30FF\u4E00-\u9FAF]/.test(inbound)) return "ja";
+  if (/[äöüß]|\b(und|nicht|bitte|danke|ich|wie\s+viel)\b/i.test(inbound)) return "de";
+  if (/\b(e|o|não|obrigad[oa]|preço|quanto)\b/i.test(inbound) && /[ãõáéíóú]/i.test(inbound)) return "pt";
+  if (/\b(il|non|grazie|prezzo|quanto)\b/i.test(inbound)) return "it";
+  const rememberedLang =
+    remembered === "es" || remembered === "ca" || remembered === "en" || remembered === "fr" ? remembered : null;
+  const four = detectConvoLang(inbound, null, rememberedLang);
+  const cur = score(inbound);
+  const best = Math.max(cur.es, cur.ca, cur.en, cur.fr);
+  if (best === 0 && !remembered) return "und";
+  return four;
+}
+
 /** Lock after the first real sentence. `hola` / `ok` / `vale` do not switch. Explicit ask does. */
 export function detectConvoLang(
   inbound: string,
@@ -44,5 +65,5 @@ export function detectConvoLang(
     const pb = (Object.entries(prev) as [ConvoLang, number][]).sort((a, b) => b[1] - a[1])[0];
     if (pb[1] > 0) return pb[0];
   }
-  return "es";
+  return remembered ?? "es";
 }

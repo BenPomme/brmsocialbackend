@@ -388,6 +388,26 @@ test("decisionFromScript applies onboard_email and stays in English", () => {
   assert.match(d.body, /reviews@babyrock\.ai/);
 });
 
+test("in_business without a Google connection does not go active", () => {
+  const premature = decisionFromScript("in_business", seed({ managerInviteStatus: "pending" }));
+  assert.notEqual(premature.phase, "active");
+  assert.equal(premature.faqId, "onboard_premature");
+  const live = decisionFromScript("in_business", seed({ managerInviteStatus: "accepted" }));
+  assert.equal(live.phase, "active");
+  assert.equal(live.faqId, "in_business");
+});
+
+test("low_star_ok from the LLM path applies owner approval", () => {
+  assert.equal(decisionFromScript("low_star_ok", seed()).applyClientReply, "ok");
+  assert.equal(decisionFromScript("baja_active", seed()).applyClientReply, "baja");
+});
+
+test("human route stays needs_human", () => {
+  const d = decisionFromScript("human", seed());
+  assert.equal(d.status, "needs_human");
+  assert.equal(d.source, "off_script");
+});
+
 test("manager_connected is the in-business trigger", () => {
   const d = decideRosalia({
     ...seed({
