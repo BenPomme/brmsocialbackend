@@ -1,4 +1,4 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "crypto";
 
 const TTL_MS = 24 * 60 * 60 * 1000;
 
