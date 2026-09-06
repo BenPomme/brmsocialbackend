@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { ingestInbound } from "@/lib/inbox";
+import { acceptWhatsappWebhook, WhatsappWebhookError } from "@/lib/whatsapp-accept";
+import { pumpWaInboundJobs } from "@/lib/jobs";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -15,70 +16,19 @@ export async function GET(req: Request) {
   return new NextResponse("forbidden", { status: 403 });
 }
 
-type WaMessage = {
-  id?: string;
-  from?: string;
-  from_user_id?: string;
-  type?: string;
-  text?: { body?: string };
-};
-
 export async function POST(req: Request) {
+  const raw = await req.text();
+  const signature = req.headers.get("x-hub-signature-256");
   try {
-    const body = (await req.json()) as {
-      object?: string;
-      entry?: Array<{
-        changes?: Array<{
-          field?: string;
-          value?: {
-            messages?: WaMessage[];
-            statuses?: unknown[];
-            errors?: unknown[];
-            contacts?: Array<{ wa_id?: string; profile?: { name?: string } }>;
-          };
-        }>;
-      }>;
-    };
-    const changes = body.entry?.flatMap((e) => e.changes ?? []) ?? [];
-    const messages = changes.flatMap((c) => c.value?.messages ?? []);
-    const statuses = changes.flatMap((c) => c.value?.statuses ?? []);
-    const errors = changes.flatMap((c) => c.value?.errors ?? []);
-    const contacts = changes.flatMap((c) => c.value?.contacts ?? []);
-    const waIds = contacts.map((x) => x.wa_id).filter(Boolean) as string[];
-    const profileByWa = new Map(
-      contacts
-        .filter((c) => c.wa_id && c.profile?.name)
-        .map((c) => [c.wa_id!.replace(/\D/g, ""), c.profile!.name!]),
-    );
-    console.log("whatsapp webhook POST", {
-      object: body.object,
-      fields: changes.map((c) => c.field),
-      messages: messages.length,
-      statuses: statuses.length,
-      errors: errors.length,
-      from: messages.map((m) => m.from ?? m.from_user_id ?? null),
-      types: messages.map((m) => m.type),
-    });
-    for (const m of messages) {
-      const from = (m.from ?? m.from_user_id ?? waIds[0] ?? "").trim();
-      if (!m?.id || !from) {
-        console.warn("whatsapp webhook skip", { id: m?.id, keys: m ? Object.keys(m) : [] });
-        continue;
-      }
-      const mediaType = m.type && m.type !== "text" ? m.type : "text";
-      const text = m.type === "text" ? m.text?.body ?? "" : `(${m.type ?? "message"})`;
-      const profileName = profileByWa.get(from.replace(/\D/g, "")) ?? contacts[0]?.profile?.name ?? null;
-      await ingestInbound({
-        channel: "whatsapp",
-        counterparty: from,
-        body: text || "(vide)",
-        providerId: `wa-${m.id}`,
-        payload: { message: m, profileName, mediaType },
-        profileName,
-      });
-    }
+    const result = await acceptWhatsappWebhook(raw, signature);
+    const { after } = await import("next/server");
+    after(() => pumpWaInboundJobs().catch((e) => console.warn("wa_inbound pump", e)));
+    return NextResponse.json(result);
   } catch (e) {
+    if (e instanceof WhatsappWebhookError) {
+      return NextResponse.json({ error: e.message }, { status: e.status });
+    }
     console.warn("whatsapp webhook", e);
+    return NextResponse.json({ error: "accept failed" }, { status: 500 });
   }
-  return NextResponse.json({ ok: true });
 }

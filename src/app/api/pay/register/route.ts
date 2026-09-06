@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { payCorsHeaders, resolvePayClient, str } from "@/lib/pay";
+import { PayAuthError } from "@/lib/pay-access";
+import { payCorsHeaders, startPayRegistration, str } from "@/lib/pay";
 
 export async function OPTIONS(req: Request) {
   return new NextResponse(null, { status: 204, headers: payCorsHeaders(req) });
@@ -25,8 +26,7 @@ export async function POST(req: Request) {
   }
   const company = body.companyInvoice === true;
   try {
-    const client = await resolvePayClient({
-      clientId: str(body.clientId),
+    const started = await startPayRegistration({
       name,
       email,
       city,
@@ -38,10 +38,15 @@ export async function POST(req: Request) {
       billingPostcode: company ? str(body.billingPostcode) : null,
       billingCity: city,
       billingCountry: str(body.billingCountry) ?? "ES",
+      idempotencyKey: str(body.idempotencyKey) ?? req.headers.get("idempotency-key"),
     });
-    return NextResponse.json({ clientId: client.id }, { headers });
+    return NextResponse.json(
+      { clientId: started.clientId, registrationId: started.registrationId, capability: started.capability },
+      { headers },
+    );
   } catch (e) {
+    const status = e instanceof PayAuthError ? e.status : 400;
     const message = e instanceof Error ? e.message : "No se ha podido registrar";
-    return NextResponse.json({ error: message }, { status: 400, headers });
+    return NextResponse.json({ error: message }, { status, headers });
   }
 }

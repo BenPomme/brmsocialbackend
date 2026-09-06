@@ -96,13 +96,15 @@ function draftId(threadId: string) {
 }
 
 async function loadThread(threadId: string) {
-  return prisma.inboxThread.findUnique({
+  const thread = await prisma.inboxThread.findUnique({
     where: { id: threadId },
     include: {
       lead: { select: { name: true, city: true } },
-      messages: { orderBy: { createdAt: "asc" }, take: 80 },
+      messages: { orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 80 },
     },
   });
+  if (!thread) return null;
+  return { ...thread, messages: [...thread.messages].reverse() };
 }
 
 async function clientForThread(thread: { clientId: string | null; counterparty: string; lead: { city: string | null } | null }) {
@@ -121,10 +123,22 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
   const thread = await loadThread(threadId);
   if (!thread) throw new Error("thread not found");
 
-  const lastIn = [...thread.messages].reverse().find((m) => m.direction === "in");
+  const lastIn = eventOverride && "messageId" in eventOverride && eventOverride.messageId
+    ? thread.messages.find((m) => m.id === eventOverride.messageId) ??
+      [...thread.messages].reverse().find((m) => m.direction === "in")
+    : [...thread.messages].reverse().find((m) => m.direction === "in");
   const event: RosaliaEvent | null =
-    eventOverride ?? (lastIn ? mediaFromPayload(lastIn.payload) ?? { type: "inbound_text", text: lastIn.body } : null);
+    eventOverride ??
+    (lastIn
+      ? mediaFromPayload(lastIn.payload) ?? { type: "inbound_text", text: lastIn.body, messageId: lastIn.id }
+      : null);
   if (!event) return { created: false as const, reason: "no inbound" };
+  if (event.type === "inbound_text" && event.messageId && lastIn && lastIn.id !== event.messageId) {
+    const newer = [...thread.messages].reverse().find((m) => m.direction === "in");
+    if (newer && newer.id !== event.messageId) {
+      return { created: false as const, reason: "stale inbound" };
+    }
+  }
 
   const allMessages = thread.messages.filter((m) => m.direction !== "draft");
   const allOutbound = allMessages.filter((m) => m.direction === "out").map((m) => m.body);
@@ -137,7 +151,7 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
     city: client?.city ?? thread.lead?.city ?? thread.city,
     inbound: inboundForCity,
   });
-  const lastInbound = thread.messages.filter((m) => m.direction === "in").at(-1)?.createdAt ?? null;
+  const lastInbound = thread.lastInboundAt ?? lastIn?.createdAt ?? null;
   const pendingLow = client
     ? Boolean(
         await prisma.avis.findFirst({
@@ -262,7 +276,16 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
   const draft = existing
     ? await prisma.inboxMessage.update({
         where: { id: existing.id },
-        data: { body, payload: { source: replySource, kind: decided.kind, faqId: decided.faqId, phase: decided.phase } },
+        data: {
+          body,
+          payload: {
+            source: replySource,
+            kind: decided.kind,
+            faqId: decided.faqId,
+            phase: decided.phase,
+            inboundMessageId: event.type === "inbound_text" ? event.messageId ?? lastIn?.id : lastIn?.id,
+          },
+        },
       })
     : await prisma.inboxMessage.create({
         data: {
@@ -270,7 +293,13 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
           direction: "draft",
           body,
           providerId: draftId(thread.id),
-          payload: { source: replySource, kind: decided.kind, faqId: decided.faqId, phase: decided.phase },
+          payload: {
+            source: replySource,
+            kind: decided.kind,
+            faqId: decided.faqId,
+            phase: decided.phase,
+            inboundMessageId: event.type === "inbound_text" ? event.messageId ?? lastIn?.id : lastIn?.id,
+          },
         },
       });
 

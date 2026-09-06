@@ -1,9 +1,12 @@
 import type Stripe from "stripe";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
-import { appUrl, siteUrl } from "./env";
+import { appUrl, siteUrl, stripeMode } from "./env";
 import { isSantCugat, SANT_CUGAT_OFFER } from "./offers";
 import { IVA_PERCENT, skuForPlan, splitTtc, type PayPlanId } from "./skus";
 import { getStripe } from "./stripe";
+import { continuePayClient, registerPayDraft, type PayAccess } from "./pay-access";
+import { servicePeriod } from "./billing-state";
 
 export type { PayPlanId } from "./skus";
 export type VatMode = "es_iva" | "eu_reverse";
@@ -55,6 +58,8 @@ export function payCorsHeaders(req: Request) {
 
 export type BillingInput = {
   clientId?: string | null;
+  capability?: string | null;
+  idempotencyKey?: string | null;
   name?: string | null;
   email?: string | null;
   city?: string | null;
@@ -68,6 +73,45 @@ export type BillingInput = {
   billingCity?: string | null;
   billingCountry?: string | null;
 };
+
+export function payAccessOf(input: BillingInput, sessionClientId?: string | null): PayAccess {
+  return {
+    clientId: input.clientId,
+    capability: input.capability,
+    idempotencyKey: input.idempotencyKey,
+    sessionClientId,
+  };
+}
+
+/** PATCH: omitted or blank fields are left unchanged. */
+export function definedBillingPatch(input: BillingInput) {
+  const email = (input.billingEmail ?? input.email)?.trim().toLowerCase() || undefined;
+  const data: Record<string, string | null | undefined> = {};
+  if (input.name?.trim()) data.name = input.name.trim();
+  if (input.legalName?.trim()) data.legalName = input.legalName.trim();
+  if (input.taxId?.trim()) data.taxId = normalizeTaxId(input.taxId);
+  if (email) {
+    data.billingEmail = email;
+    data.emailPublic = email;
+  }
+  if (input.billingLine1?.trim()) data.billingLine1 = input.billingLine1.trim();
+  if (input.billingPostcode?.trim()) data.billingPostcode = input.billingPostcode.trim();
+  if ((input.billingCity ?? input.city)?.trim()) {
+    data.billingCity = (input.billingCity ?? input.city)!.trim();
+    data.city = (input.city ?? input.billingCity)!.trim();
+  }
+  if (input.billingCountry?.trim()) {
+    const country = input.billingCountry.trim().toUpperCase();
+    data.billingCountry = country;
+    data.country = country;
+  }
+  if (input.whatsapp?.trim()) data.whatsappOwner = input.whatsapp.trim();
+  if (input.mapsUri?.trim()) data.mapsUri = input.mapsUri.trim();
+  if (data.billingCountry || data.taxId) {
+    data.vatMode = inferVatMode((data.billingCountry as string | null) ?? null, (data.taxId as string | null) ?? null);
+  }
+  return data;
+}
 
 export function normalizeTaxId(raw: string) {
   return raw.replace(/[\s.]/g, "").toUpperCase();
@@ -99,58 +143,12 @@ export function planAmounts(plan: PayPlanId, vatMode: VatMode) {
   return split;
 }
 
-export async function resolvePayClient(input: BillingInput) {
-  const email = (input.billingEmail ?? input.email)?.trim().toLowerCase() || null;
-  const vatMode = inferVatMode(input.billingCountry ?? null, input.taxId ?? null);
-  const billing = {
-    legalName: input.legalName?.trim() || null,
-    taxId: input.taxId ? normalizeTaxId(input.taxId) : null,
-    billingEmail: email,
-    billingLine1: input.billingLine1?.trim() || null,
-    billingPostcode: input.billingPostcode?.trim() || null,
-    billingCity: (input.billingCity ?? input.city)?.trim() || null,
-    billingCountry: (input.billingCountry ?? "ES").trim().toUpperCase() || "ES",
-    vatMode,
-    city: (input.city ?? input.billingCity)?.trim() || null,
-    country: (input.billingCountry ?? "ES").trim().toUpperCase() || "ES",
-    emailPublic: email,
-    whatsappOwner: input.whatsapp?.trim() || null,
-    mapsUri: input.mapsUri?.trim() || null,
-  };
-
-  if (input.clientId) {
-    const c = await prisma.client.findUnique({ where: { id: input.clientId } });
-    if (!c) throw new Error("client introuvable");
-    return prisma.client.update({ where: { id: c.id }, data: billing });
-  }
-  if (email) {
-    const existing = await prisma.client.findFirst({
-      where: { emailPublic: { equals: email, mode: "insensitive" } },
-    });
-    if (existing) {
-      return prisma.client.update({ where: { id: existing.id }, data: { ...billing, name: input.name?.trim() || existing.name } });
-    }
-  }
-  return prisma.client.create({
-    data: {
-      name: (input.name ?? "").trim() || input.legalName?.trim() || "Simu Stripe",
-      plan: "avis_month",
-      status: "lead",
-      ...billing,
-    },
-  });
+export async function resolvePayClient(input: BillingInput & { sessionClientId?: string | null }) {
+  return continuePayClient(definedBillingPatch(input), payAccessOf(input, input.sessionClientId));
 }
 
-function payloadEvent(payload: unknown): string | null {
-  if (!payload || typeof payload !== "object") return null;
-  const event = (payload as { event?: unknown }).event;
-  return typeof event === "string" ? event : null;
-}
-
-function payloadSessionId(payload: unknown): string | null {
-  if (!payload || typeof payload !== "object") return null;
-  const id = (payload as { sessionId?: unknown }).sessionId;
-  return typeof id === "string" ? id : null;
+export async function startPayRegistration(input: BillingInput) {
+  return registerPayDraft(definedBillingPatch(input), payAccessOf(input));
 }
 
 export type InvoiceLinks = {
@@ -205,65 +203,89 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
   if (session.payment_status !== "paid") {
     return { ok: false as const, reason: "not_paid" as const, paymentStatus: session.payment_status };
   }
+  if (!session.livemode && stripeMode() === "live") {
+    return { ok: false as const, reason: "test_payment_in_live" as const };
+  }
   const clientId = session.client_reference_id || session.metadata?.clientId || null;
   if (!clientId) return { ok: false as const, reason: "no_client" as const };
 
   const client = await prisma.client.findUnique({ where: { id: clientId } });
   if (!client) return { ok: false as const, reason: "client_missing" as const };
 
-  const previous = await prisma.action.findMany({
-    where: { clientId: client.id, type: "billing" },
-    orderBy: { createdAt: "desc" },
-    take: 30,
-  });
-  const alreadyPaid = previous.some(
-    (a) => payloadEvent(a.payload) === "checkout_paid" && payloadSessionId(a.payload) === session.id,
-  );
   const invoice = await resolveInvoice(session);
-  if (alreadyPaid) {
+  const existing = await prisma.paymentEvidence.findUnique({
+    where: { provider_providerPaymentId: { provider: "stripe", providerPaymentId: session.id } },
+  });
+  if (existing) {
     return { ok: true as const, clientId: client.id, already: true as const, invoice };
   }
 
-  const nextStatus = client.status === "lead" ? "paye" : client.status;
+  const plan = session.metadata?.plan === "year" ? "year" : "month";
+  const now = new Date();
+  const period = servicePeriod({ plan, from: now });
   const email = session.customer_details?.email ?? client.billingEmail ?? client.emailPublic;
   const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id ?? client.stripeCustomerId;
 
-  await prisma.$transaction(async (tx) => {
-    await tx.client.update({
-      where: { id: client.id },
-      data: {
-        status: nextStatus,
-        stripeOrBizumRef: session.id,
-        emailPublic: email,
-        billingEmail: email,
-        stripeCustomerId: customerId,
-        stripeInvoiceId: invoice.id,
-      },
-    });
-    await tx.lead.updateMany({
-      where: { clientId: client.id },
-      data: { status: "paid" },
-    });
-    await tx.action.create({
-      data: {
-        clientId: client.id,
-        type: "billing",
-        actor: "stripe",
-        result: "ok",
-        payload: {
-          event: "checkout_paid",
-          sessionId: session.id,
-          invoiceId: invoice.id,
-          plan: session.metadata?.plan ?? "month",
-          amount: session.amount_total,
-          currency: session.currency,
-          vatMode: session.metadata?.vatMode ?? client.vatMode,
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.paymentEvidence.create({
+        data: {
+          clientId: client.id,
+          provider: "stripe",
+          providerPaymentId: session.id,
+          product: "social",
+          interval: period.interval,
+          amount: session.amount_total ?? null,
+          currency: session.currency ?? "eur",
           livemode: session.livemode,
-          paymentStatus: session.payment_status,
+          periodStart: period.start,
+          periodEnd: period.end,
         },
-      },
+      });
+      await tx.client.update({
+        where: { id: client.id },
+        data: {
+          status: "paye",
+          plan: plan === "year" ? "avis_year" : "avis_month",
+          trialEndsAt: null,
+          offer: client.status === "essai" ? client.offer : client.offer,
+          stripeOrBizumRef: session.id,
+          emailPublic: email,
+          billingEmail: email,
+          stripeCustomerId: customerId,
+          stripeInvoiceId: invoice.id,
+        },
+      });
+      await tx.lead.updateMany({
+        where: { clientId: client.id },
+        data: { status: "paid" },
+      });
+      await tx.action.create({
+        data: {
+          clientId: client.id,
+          type: "billing",
+          actor: "stripe",
+          result: "ok",
+          payload: {
+            event: "checkout_paid",
+            sessionId: session.id,
+            invoiceId: invoice.id,
+            plan,
+            amount: session.amount_total,
+            currency: session.currency,
+            vatMode: session.metadata?.vatMode ?? client.vatMode,
+            livemode: session.livemode,
+            paymentStatus: session.payment_status,
+          },
+        },
+      });
     });
-  });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      return { ok: true as const, clientId: client.id, already: true as const, invoice };
+    }
+    throw e;
+  }
 
   const mailed = await deliverInvoiceEmail({
     to: email,
@@ -409,32 +431,62 @@ export async function createTrialSantCugat(opts: BillingInput) {
 
   const trialEndsAt = new Date(Date.now() + SANT_CUGAT_OFFER.trialDays * 24 * 60 * 60 * 1000);
   const client = await resolvePayClient(opts);
-  const updated = await prisma.client.update({
-    where: { id: client.id },
-    data: {
-      plan: "avis_month",
-      status: "essai",
-      offer: SANT_CUGAT_OFFER.id,
-      trialEndsAt,
-      catchupMonths: SANT_CUGAT_OFFER.catchupMonths,
-      city: city?.trim() || "Sant Cugat del Vallès",
-    },
+  const evidenceId = `trial:${client.id}:${SANT_CUGAT_OFFER.id}`;
+  const already = await prisma.paymentEvidence.findUnique({
+    where: { provider_providerPaymentId: { provider: "trial", providerPaymentId: evidenceId } },
   });
-  await prisma.action.create({
-    data: {
-      clientId: updated.id,
-      type: "billing",
-      actor: "offer",
-      result: "ok",
-      payload: {
-        event: "trial_started",
-        offer: SANT_CUGAT_OFFER.id,
-        trialEndsAt: trialEndsAt.toISOString(),
-        catchupMonths: SANT_CUGAT_OFFER.catchupMonths,
-        thenSku: SANT_CUGAT_OFFER.thenSku,
+  if (already) {
+    const existing = await prisma.client.findUniqueOrThrow({ where: { id: client.id } });
+    return {
+      clientId: existing.id,
+      trialEndsAt: existing.trialEndsAt ?? trialEndsAt,
+      catchupMonths: existing.catchupMonths ?? SANT_CUGAT_OFFER.catchupMonths,
+    };
+  }
+  const now = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    await tx.paymentEvidence.create({
+      data: {
+        clientId: client.id,
+        provider: "trial",
+        providerPaymentId: evidenceId,
+        product: "social",
+        interval: "trial",
         amount: 0,
+        currency: "eur",
+        livemode: false,
+        periodStart: now,
+        periodEnd: trialEndsAt,
       },
-    },
+    });
+    const row = await tx.client.update({
+      where: { id: client.id },
+      data: {
+        plan: "avis_month",
+        status: "essai",
+        offer: SANT_CUGAT_OFFER.id,
+        trialEndsAt,
+        catchupMonths: SANT_CUGAT_OFFER.catchupMonths,
+        city: city?.trim() || "Sant Cugat del Vallès",
+      },
+    });
+    await tx.action.create({
+      data: {
+        clientId: row.id,
+        type: "billing",
+        actor: "offer",
+        result: "ok",
+        payload: {
+          event: "trial_started",
+          offer: SANT_CUGAT_OFFER.id,
+          trialEndsAt: trialEndsAt.toISOString(),
+          catchupMonths: SANT_CUGAT_OFFER.catchupMonths,
+          thenSku: SANT_CUGAT_OFFER.thenSku,
+          amount: 0,
+        },
+      },
+    });
+    return row;
   });
   try {
     const { linkThreadToClient, emitRosaliaEvent } = await import("./rosalia-reply");

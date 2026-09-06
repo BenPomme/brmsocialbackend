@@ -61,12 +61,16 @@ export async function publishAvis(opts: {
   if (!avis) throw new Error("avis not found");
   if (avis.status === "bloque") throw new Error("avis is blocked");
   if (avis.status === "publie") throw new Error("already published");
-  if (avis.stars <= 3 && avis.status !== "pret") {
-    throw new Error("1–3★ cannot be published until the client has said OK (status pret)");
-  }
-
   const latest = avis.reponses[0];
   if (!latest) throw new Error("no draft to publish");
+  if (avis.stars <= 3) {
+    const approval = await prisma.replyApproval.findFirst({
+      where: { avisId: avis.id, reponseId: latest.id, decision: "approved", valid: true },
+    });
+    if (!approval || approval.clientId !== avis.clientId) {
+      throw new Error("1–3★ cannot be published without a valid owner approval of this reply version");
+    }
+  }
   const text = publishTextFromLatest(latest).trim();
   if (!text) throw new Error("empty reply text");
 

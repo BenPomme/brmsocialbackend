@@ -67,6 +67,9 @@ export async function runJob(jobId: string) {
         clientId: String(payload.clientId),
         weekly: payload.weekly === true,
       })) as unknown as Prisma.InputJsonValue;
+    } else if (job.kind === "wa_inbound") {
+      const { processWaInboundEvent } = await import("./whatsapp-accept");
+      result = (await processWaInboundEvent(String(payload.eventId))) as unknown as Prisma.InputJsonValue;
     } else if (job.kind === "scope") {
       result = { note: "scope is interactive, not a worker" };
     } else {
@@ -104,5 +107,20 @@ export async function enqueueAndRun(kind: string, payload: Prisma.InputJsonValue
       jobId: job.id,
       error: e instanceof Error ? e.message : String(e),
     };
+  }
+}
+
+export async function pumpWaInboundJobs() {
+  const queued = await prisma.job.findMany({
+    where: { kind: "wa_inbound", status: "queued" },
+    orderBy: { createdAt: "asc" },
+    take: 20,
+  });
+  for (const job of queued) {
+    try {
+      await runJob(job.id);
+    } catch (e) {
+      console.warn("wa_inbound job", job.id, e);
+    }
   }
 }

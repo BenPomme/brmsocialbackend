@@ -53,5 +53,7 @@ test("approve path: needs_contact without To, draft with body", () => {
   assert.equal(hasTo(base), false);
   assert.equal(pipelineStatus({ ...base, email: "a@b.com", outreachBody: "Hola" }, null), "draft");
   assert.equal(pipelineStatus({ ...base, email: "a@b.com", outreachStatus: "approved", outreachBody: "Hola" }, null), "approved");
-  assert.equal(pipelineStatus(base, { status: "paid" }), "paid");
+  assert.equal(pipelineStatus(base, { status: "paye" }), "paid");
+  assert.equal(pipelineStatus(base, { status: "lead", stripeCustomerId: "cus_fixture_unpaid" }), "needs_contact");
+  assert.equal(pipelineStatus(base, { status: "essai" }), "paid");
 });

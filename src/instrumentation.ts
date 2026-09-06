@@ -4,4 +4,10 @@ export async function register() {
   printBootChecklist();
   const { startFicheWatchLoop } = await import("@/lib/fiche/loop");
   startFicheWatchLoop();
+  const { pumpWaInboundJobs } = await import("@/lib/jobs");
+  const tick = () => {
+    pumpWaInboundJobs().catch((e) => console.warn("wa_inbound pump", e));
+  };
+  tick();
+  setInterval(tick, 3000);
 }

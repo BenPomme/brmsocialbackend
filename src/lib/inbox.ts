@@ -15,6 +15,7 @@ export async function ingestInbound(opts: {
   direction?: "in" | "out";
   profileName?: string | null;
   skipDraft?: boolean;
+  occurredAt?: Date;
 }) {
   const counterparty = opts.counterparty.trim().toLowerCase();
   const direction = opts.direction ?? "in";
@@ -30,8 +31,7 @@ export async function ingestInbound(opts: {
       AND: [
         {
           OR: [
-            { status: { in: ["paid", "essai"] } },
-            { stripeCustomerId: { not: null } },
+            { status: { in: ["paye", "essai", "actif"] } },
           ],
         },
         {
@@ -79,6 +79,7 @@ export async function ingestInbound(opts: {
     });
   }
 
+  const at = opts.occurredAt ?? new Date();
   const existing = await prisma.inboxMessage.findUnique({
     where: { providerId: opts.providerId },
   });
@@ -94,12 +95,12 @@ export async function ingestInbound(opts: {
       status,
       firstName: spoken || fromProfile || null,
       leadId: lead?.id ?? null,
-      lastMessageAt: new Date(),
-      lastInboundAt: direction === "in" ? new Date() : undefined,
+      lastMessageAt: at,
+      lastInboundAt: direction === "in" ? at : undefined,
     },
     update: {
-      lastMessageAt: new Date(),
-      ...(direction === "in" ? { status, lastInboundAt: new Date() } : {}),
+      lastMessageAt: at,
+      ...(direction === "in" ? { status, lastInboundAt: at } : {}),
       ...(spoken ? { firstName: spoken } : {}),
       leadId: lead?.id ?? undefined,
       subject: opts.subject ?? undefined,
@@ -121,13 +122,18 @@ export async function ingestInbound(opts: {
       body: opts.body,
       providerId: opts.providerId,
       payload: opts.payload as object | undefined,
+      createdAt: at,
     },
   });
 
   if (!opts.skipDraft && createdInboundShouldDraft(opts.channel, direction)) {
     try {
       const { proposeAndMaybeSend } = await import("./rosalia-reply");
-      await proposeAndMaybeSend(thread.id);
+      await proposeAndMaybeSend(thread.id, {
+        type: "inbound_text",
+        text: opts.body,
+        messageId: message.id,
+      });
     } catch (e) {
       console.warn("rosalia propose", e);
     }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { stripeMode, stripeSecretKey } from "@/lib/env";
+import { PayAuthError } from "@/lib/pay-access";
 import { createCheckoutSession, parsePayPlan, payCorsHeaders, str } from "@/lib/pay";
 
 export async function OPTIONS(req: Request) {
@@ -25,6 +26,8 @@ export async function POST(req: Request) {
       req,
       plan: parsePayPlan(body.plan),
       clientId: str(body.clientId),
+      capability: str(body.capability),
+      idempotencyKey: str(body.idempotencyKey) ?? req.headers.get("idempotency-key"),
       name: str(body.name),
       email: str(body.email),
       city: str(body.city),
@@ -40,7 +43,8 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ...session, mode: stripeMode() }, { headers });
   } catch (e) {
+    const status = e instanceof PayAuthError ? e.status : 400;
     const message = e instanceof Error ? e.message : "échec checkout";
-    return NextResponse.json({ error: message }, { status: 400, headers });
+    return NextResponse.json({ error: message }, { status, headers });
   }
 }

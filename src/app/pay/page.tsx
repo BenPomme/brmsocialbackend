@@ -33,6 +33,18 @@ function PayForm() {
   const [billingPostcode, setBillingPostcode] = useState(params.get("cp") ?? "");
   const [billingCountry, setBillingCountry] = useState(params.get("country") ?? "ES");
   const [clientId, setClientId] = useState(params.get("client") ?? "");
+  const [capability, setCapability] = useState("");
+  const [idempotencyKey] = useState(() => {
+    try {
+      const existing = sessionStorage.getItem("br-pay-idem");
+      if (existing) return existing;
+      const fresh = crypto.randomUUID();
+      sessionStorage.setItem("br-pay-idem", fresh);
+      return fresh;
+    } catch {
+      return crypto.randomUUID();
+    }
+  });
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -48,6 +60,7 @@ function PayForm() {
       if (s.city) setBillingCity(s.city);
       if (s.plan) setPlan(s.plan);
       if (s.clientId) setClientId(s.clientId);
+      if (s.capability) setCapability(s.capability);
       if (s.companyInvoice === "1") setCompanyInvoice(true);
       if (s.legalName) setLegalName(s.legalName);
       if (s.taxId) setTaxId(s.taxId);
@@ -65,6 +78,8 @@ function PayForm() {
   const payload = useMemo(
     () => ({
       clientId: clientId || undefined,
+      capability: capability || undefined,
+      idempotencyKey,
       plan,
       name,
       email,
@@ -81,6 +96,8 @@ function PayForm() {
     }),
     [
       clientId,
+      capability,
+      idempotencyKey,
       plan,
       name,
       email,
@@ -117,19 +134,21 @@ function PayForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    const data = (await res.json()) as { clientId?: string; error?: string };
+    const data = (await res.json()) as { clientId?: string; capability?: string; error?: string };
     setPending(false);
-    if (!res.ok || !data.clientId) {
+    if (!res.ok || !data.clientId || !data.capability) {
       setError(data.error ?? "No se ha podido guardar el registro");
       return;
     }
     setClientId(data.clientId);
+    setCapability(data.capability);
     try {
       sessionStorage.setItem(
         "br-pay",
         JSON.stringify({
           ...payload,
           clientId: data.clientId,
+          capability: data.capability,
           companyInvoice: companyInvoice ? "1" : "",
           line1: billingLine1,
           cp: billingPostcode,

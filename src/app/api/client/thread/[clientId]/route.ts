@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { isResponse, requireRole } from "@/lib/api-guard";
 import { prisma } from "@/lib/db";
-import { handleClientReply } from "@/lib/client-reply";
+import { ClientReplyError, handleClientReply } from "@/lib/client-reply";
 
 export async function GET(_req: Request, ctx: { params: Promise<{ clientId: string }> }) {
   const session = await requireRole(["client", "admin"]);
   if (isResponse(session)) return session;
   const { clientId } = await ctx.params;
-  if (session.role === "client" && session.clientId && session.clientId !== clientId) {
+  if (session.role === "client" && (!session.clientId || session.clientId !== clientId)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
@@ -33,7 +33,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ clientId: stri
   const session = await requireRole(["client", "admin"]);
   if (isResponse(session)) return session;
   const { clientId } = await ctx.params;
-  if (session.role === "client" && session.clientId && session.clientId !== clientId) {
+  if (session.role === "client" && (!session.clientId || session.clientId !== clientId)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
   const body = (await req.json()) as { text?: string; avisId?: string };
@@ -48,6 +48,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ clientId: stri
     });
     return NextResponse.json(result);
   } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 400 });
+    const status = e instanceof ClientReplyError ? e.status : 400;
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status });
   }
 }

@@ -1,5 +1,8 @@
+import { isPaidClient } from "./billing-state";
+
 export const REVIEW_FLOOR = 50;
 export const REPLY_RATE_MAX = 0.15;
+export { isPaidClient };
 
 export type PipelineStatus =
   | "in_scope"
@@ -20,12 +23,6 @@ export function googleReplyRate(lead: {
   const n = lead.inspectReviews6m ?? 0;
   if (n <= 0) return null;
   return (lead.inspectReplied6m ?? 0) / n;
-}
-
-export function isPaidClient(client: { status: string; stripeCustomerId?: string | null } | null) {
-  if (!client) return false;
-  if (client.status === "paid" || client.status === "essai") return true;
-  return Boolean(client.stripeCustomerId);
 }
 
 export function hasTo(lead: { email: string | null; outreachTo: string | null; waSite: string | null }) {

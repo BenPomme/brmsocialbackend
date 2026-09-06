@@ -9,7 +9,7 @@ export type OnboardingStep = "maps" | "people" | "email" | "role" | "wait_google
 export type InboundKind = "ok" | "stop" | "phone" | "text";
 
 export type RosaliaEvent =
-  | { type: "inbound_text"; text: string }
+  | { type: "inbound_text"; text: string; messageId?: string }
   | { type: "inbound_media"; media: "image" | "audio" | "video" | "sticker" | "document" | "other" }
   | { type: "payment_confirmed"; via: "stripe" | "trial" }
   | { type: "manager_connected" }
