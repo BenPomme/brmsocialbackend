@@ -10,7 +10,7 @@ import {
 export { WhatsappWebhookError };
 
 export async function acceptWhatsappWebhook(raw: string, signature: string | null) {
-  assertWhatsappSignature(raw, signature, process.env.WHATSAPP_APP_SECRET);
+  await assertWhatsappSignature(raw, signature, process.env.WHATSAPP_APP_SECRET);
   let json: Parameters<typeof receivingIds>[0];
   try {
     json = JSON.parse(raw) as Parameters<typeof receivingIds>[0];

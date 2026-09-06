@@ -109,18 +109,3 @@ export async function enqueueAndRun(kind: string, payload: Prisma.InputJsonValue
     };
   }
 }
-
-export async function pumpWaInboundJobs() {
-  const queued = await prisma.job.findMany({
-    where: { kind: "wa_inbound", status: "queued" },
-    orderBy: { createdAt: "asc" },
-    take: 20,
-  });
-  for (const job of queued) {
-    try {
-      await runJob(job.id);
-    } catch (e) {
-      console.warn("wa_inbound job", job.id, e);
-    }
-  }
-}

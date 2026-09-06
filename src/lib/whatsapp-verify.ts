@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import { hmacSha256Hex, timingSafeEqualStr } from "./sha";
 
 export class WhatsappWebhookError extends Error {
   constructor(
@@ -10,23 +10,20 @@ export class WhatsappWebhookError extends Error {
   }
 }
 
-export function verifyHubSignature(raw: string | Buffer, header: string | null, secret: string) {
+export async function verifyHubSignature(raw: string, header: string | null, secret: string) {
   if (!header || !secret) return false;
-  const expected = `sha256=${createHmac("sha256", secret).update(raw).digest("hex")}`;
-  const a = Buffer.from(header);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
+  const expected = `sha256=${await hmacSha256Hex(secret, raw)}`;
+  return timingSafeEqualStr(header, expected);
 }
 
-export function assertWhatsappSignature(raw: string | Buffer, header: string | null, secret: string | undefined) {
+export async function assertWhatsappSignature(raw: string, header: string | null, secret: string | undefined) {
   if (!secret?.trim()) {
     throw new WhatsappWebhookError("WHATSAPP_APP_SECRET missing", 503);
   }
   if (!header?.startsWith("sha256=")) {
     throw new WhatsappWebhookError("signature missing", 401);
   }
-  if (!verifyHubSignature(raw, header, secret.trim())) {
+  if (!(await verifyHubSignature(raw, header, secret.trim()))) {
     throw new WhatsappWebhookError("signature invalid", 401);
   }
 }

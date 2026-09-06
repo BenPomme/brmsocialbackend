@@ -15,26 +15,26 @@ function sign(body: string) {
   return `sha256=${createHmac("sha256", secret).update(body).digest("hex")}`;
 }
 
-test("valid signature succeeds", () => {
-  assert.equal(verifyHubSignature(raw, sign(raw), secret), true);
+test("valid signature succeeds", async () => {
+  assert.equal(await verifyHubSignature(raw, sign(raw), secret), true);
 });
 
-test("missing signature is rejected", () => {
-  assert.equal(verifyHubSignature(raw, null, secret), false);
-  assert.throws(() => assertWhatsappSignature(raw, null, secret), (e: unknown) => {
+test("missing signature is rejected", async () => {
+  assert.equal(await verifyHubSignature(raw, null, secret), false);
+  await assert.rejects(() => assertWhatsappSignature(raw, null, secret), (e: unknown) => {
     return e instanceof WhatsappWebhookError && e.status === 401;
   });
 });
 
-test("one changed byte of a signed payload is rejected", () => {
+test("one changed byte of a signed payload is rejected", async () => {
   const header = sign(raw);
-  assert.equal(verifyHubSignature(raw + "x", header, secret), false);
+  assert.equal(await verifyHubSignature(raw + "x", header, secret), false);
   const flipped = `${header.slice(0, -1)}${header.endsWith("a") ? "b" : "a"}`;
-  assert.equal(verifyHubSignature(raw, flipped, secret), false);
+  assert.equal(await verifyHubSignature(raw, flipped, secret), false);
 });
 
-test("missing app secret fails closed", () => {
-  assert.throws(() => assertWhatsappSignature(raw, sign(raw), undefined), (e: unknown) => {
+test("missing app secret fails closed", async () => {
+  await assert.rejects(() => assertWhatsappSignature(raw, sign(raw), undefined), (e: unknown) => {
     return e instanceof WhatsappWebhookError && e.status === 503;
   });
 });

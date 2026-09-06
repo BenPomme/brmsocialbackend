@@ -19,7 +19,7 @@ export type PayAccess = {
 };
 
 async function rotateCapability(registrationId: string) {
-  const issued = issueCapability();
+  const issued = await issueCapability();
   await prisma.payRegistration.update({
     where: { id: registrationId },
     data: { capabilityHash: issued.hash, expiresAt: issued.expiresAt },
@@ -49,7 +49,7 @@ export async function registerPayDraft(
       name,
     },
   });
-  const issued = issueCapability();
+  const issued = await issueCapability();
   const registration = await prisma.payRegistration.create({
     data: {
       clientId: client.id,
@@ -74,7 +74,7 @@ export async function authorizePayClient(access: PayAccess) {
   const registration = await prisma.payRegistration.findUnique({ where: { clientId } });
   if (!registration) throw new PayAuthError("unknown registration", 403);
   if (registration.expiresAt.getTime() < Date.now()) throw new PayAuthError("registration expired", 403);
-  if (!capabilityMatches(token, registration.capabilityHash)) {
+  if (!(await capabilityMatches(token, registration.capabilityHash))) {
     throw new PayAuthError("registration capability invalid", 403);
   }
   return prisma.client.findUnique({ where: { id: clientId } });
