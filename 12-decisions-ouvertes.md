@@ -2,7 +2,7 @@
 
 ## Figées
 
-- **Offre lockée (démo vendredi, ne pas rouvrir) :** BabyRock Social 99 € TTC/mois (81,82 HT + 17,18 IVA). 799 € TTC/an. Factura HT+IVA 21 % ES. Sant Cugat del Vallès : 1er mois 0 € + rattrapage 3 mois d’avis sans réponse, puis 99 € (2e mois = lien de paiement, pas Billing). Fil Babyrock (1–3★, topo) = Social, inclus. BabyRock Direct (WhatsApp *clients du commerce*) = pas vendu. France B2B n° TVA = HT seul.
+- **Offre :** BabyRock Social **99 € TTC/mois** suscripción mensual ; **990 € TTC/an** suscripción anual. Factura HT+IVA 21 % ES. Sant Cugat : 1er mois 0 € (trial 30 j) puis 99 €/mes. Fil Babyrock (1–3★, topo) = Social, inclus. BabyRock Direct = pas vendu. France B2B n° TVA = HT seul. Checkout Stripe en `mode: subscription`.
 - **Deux produits :** Social (`social`) vendu ; Direct (`direct`) coming soon. Pas le même WhatsApp. Pay n’accepte que les SKU Social.
 - Humains PH seulement pour la prod
 - Trois rôles : operator / admin / client (WhatsApp)
@@ -17,7 +17,7 @@
 - Coder dans Grok Build. Bot ≠ runtime publication
 - Marge ≥ 30 % avant salaire fondateur
 - Fondateur hors file opérateur ; il a une console admin + agent Scope
-- Paiement : Stripe (cartes EEE + SEPA Direct Debit). Bizum Stripe pour le 1er clic ES seulement, pas le récurrent. Pas de Billing 0,7 % tant que l’abo n’est pas dans le produit. Versement : IBAN Revolut de la SL. Site public (`brmsocial`) envoie vers `/pay` de l’usine (`brmsocialbackend`).
+- Paiement : Stripe Checkout **subscription** (cartes EEE + SEPA). 99 €/mes et 990 €/an se renouvellent seuls. Bizum si activé pour le 1er clic ES. Versement : IBAN Revolut de la SL. Site public → `/pay` usine.
 - **Veille fiche (Social, inclus, avant lancement) :** bouclier fiche (heures / nom / téléphone / adresse / statut) ; avis disparu ; note + volume et delta ; proposition de modification Google en attente ; appels et demandes d’itinéraire **dans le récap lundi**. Jamais inventer une ligne : si l’API ne donne pas le chiffre, on omet. Festifs / special hours : ping Fil Babyrock, le titulaire répond CERRADO (on patche par API) **ou** il le change lui-même dans Google. Pas de patch heures par l’opérateur. **Pas** de competitor spy, **pas** de NAP, **pas** d’attributs, **pas** de Local Post.
 
 ## À figer (1 ligne chacune, avant semaine 5)

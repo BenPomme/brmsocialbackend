@@ -169,21 +169,6 @@ function PayForm() {
     setPending(true);
     setError(null);
     const body = { ...payload, clientId, acceptedTerms: true };
-    if (trial) {
-      const res = await fetch("/api/pay/trial", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = (await res.json()) as { clientId?: string; error?: string };
-      if (!res.ok || !data.clientId) {
-        setPending(false);
-        setError(data.error ?? "No se ha podido abrir el mes gratis");
-        return;
-      }
-      window.location.href = `/pay/essai?client=${data.clientId}`;
-      return;
-    }
     const res = await fetch("/api/pay/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -203,8 +188,8 @@ function PayForm() {
       <div className="w-full max-w-lg">
         <p className="font-display text-4xl mb-2">BabyRock Social</p>
         <p className="text-muted mb-6">
-          Respuestas a reseñas de Google. <strong>{quote.monthLabel}</strong> al mes o{" "}
-          <strong>{quote.yearLabel}</strong> al año, IVA incluido.
+          Respuestas a reseñas de Google. Suscripción <strong>{quote.monthLabel}</strong> al mes o{" "}
+          <strong>{quote.yearLabel}</strong> al año, IVA incluido. Se renueva sola.
         </p>
         <ol className="flex gap-4 text-sm mb-6">
           <li className={step === 1 ? "font-medium" : "text-muted"}>1. Registro</li>
@@ -270,8 +255,8 @@ function PayForm() {
                 {santCugat || trial ? (
                   <option value="trial_santcugat">Sant Cugat — 1.er mes 0 €, luego {quote.monthLabel}</option>
                 ) : null}
-                <option value="month">Mes a mes — {quote.monthLabel}</option>
-                <option value="year">Doce meses — {quote.yearLabel}</option>
+                <option value="month">Suscripción mensual — {quote.monthLabel}</option>
+                <option value="year">Suscripción anual — {quote.yearLabel}</option>
               </select>
             </label>
             <fieldset className="text-sm space-y-2">

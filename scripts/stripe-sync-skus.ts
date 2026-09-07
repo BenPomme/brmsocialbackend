@@ -47,7 +47,12 @@ async function ensurePrice(productId: string, sku: Sku) {
   const split = splitTtc(sku.ttc);
   const listed = await stripe.prices.list({ lookup_keys: [sku.lookupKey], active: true, limit: 1 });
   const current = listed.data[0];
-  if (current && current.unit_amount === sku.ttc && current.currency === "eur") {
+  if (
+    current &&
+    current.unit_amount === sku.ttc &&
+    current.currency === "eur" &&
+    current.recurring?.interval === sku.interval
+  ) {
     console.log("price ok", sku.lookupKey, current.id, sku.ttc);
     return current;
   }
@@ -59,6 +64,7 @@ async function ensurePrice(productId: string, sku: Sku) {
     product: productId,
     currency: "eur",
     unit_amount: sku.ttc,
+    recurring: { interval: sku.interval },
     lookup_key: sku.lookupKey,
     transfer_lookup_key: true,
     nickname: `${sku.label} TTC`,

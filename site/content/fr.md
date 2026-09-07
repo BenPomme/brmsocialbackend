@@ -127,7 +127,7 @@ Quelqu’un laisse un avis sur votre fiche Google. Nous préparons une réponse 
 Vous n’envoyez pas votre mot de passe Google. Vous ajoutez une adresse BabyRock en gestionnaire de la fiche.
 
 ## product.social_price_note
-99 € par mois, TTC. Ou 799 € par an.
+99 € par mois, TTC. Ou 990 € par an.
 
 ## product.social_cta
 Je veux BabyRock Social
@@ -164,7 +164,7 @@ Gagnez du temps et ne laissez plus aucun avis Google sans réponse.
 TTC / mois
 
 ## product.social_price_detail
-Ou 799 € pour 12 mois. Économisez 389 €. Prix TTC en Espagne. Pas de frais d’installation si vous nous ajoutez comme gestionnaire.
+Ou 990 € pour 12 mois. Économisez 198 €. Prix TTC en Espagne. Pas de frais d’installation si vous nous ajoutez comme gestionnaire.
 
 ## products.social_cta
 Démarrer BabyRock Social
@@ -329,7 +329,7 @@ Mois par mois
 Douze mois
 
 ## home.price_year_detail
-799 € pour l’année, TTC, 33 % de moins que de payer mois par mois.
+990 € pour l’année, TTC, moins que de payer mois par mois.
 
 ## home.price_year_save
 Économisez 389 €
@@ -446,7 +446,7 @@ Extra annuel, haut
 de votre année
 
 ## sim.note
-Extra brut. BabyRock Social à partir de 799 € par an.
+Extra brut. BabyRock Social à partir de 990 € par an.
 
 ## sim.cta
 Que l’on s’occupe de mes avis
@@ -464,7 +464,7 @@ Il n’y a pas d’autre tableau de bord, pas d’application en plus, et nous n
 1. Parlez-nous de votre commerce
 
 ## how.step1
-Envoyez à Rosalia le nom du commerce et la fiche Google par WhatsApp ou e-mail. Choisissez 99 € mois par mois ou 799 € pour douze mois. Elle répond aux questions et envoie un lien de paiement sécurisé.
+Envoyez à Rosalia le nom du commerce et la fiche Google par WhatsApp ou e-mail. Choisissez 99 € mois par mois ou 990 € pour douze mois. Elle répond aux questions et envoie un lien de paiement sécurisé.
 
 ## how.step2_title
 2. Ajoutez-nous comme gestionnaire, pas comme propriétaire
@@ -522,7 +522,7 @@ Au-dessus des no-shows récupérés, nous ajoutons WhatsApp comme canal de rése
 Les pourcentages que nous utilisons
 
 ## research.formula
-Extra annuel = chiffre d’affaires mensuel × 12 × le pourcentage de votre type et produit. Chiffres bruts. BabyRock Social à partir de 799 € par an.
+Extra annuel = chiffre d’affaires mensuel × 12 × le pourcentage de votre type et produit. Chiffres bruts. BabyRock Social à partir de 990 € par an.
 
 ## research.what_we_use
 Votre commerce peut sortir de la fourchette. Nous préférons un chiffre commercial clair, avec les sources à côté, qu’une formule à 0,84 % que personne ne sent.
@@ -564,7 +564,7 @@ Envoyez-nous le nom du commerce et la fiche Google. Rosalia répondra aux questi
 99 €/mois, TTC
 
 ## sub.year
-799 € par an, TTC. C’est 33 % de moins.
+990 € par an, TTC. Moins que de payer mois par mois.
 
 ## sub.form_name
 Nom du commerce
@@ -591,7 +591,7 @@ Formule souhaitée
 Mois par mois, 99 €
 
 ## sub.plan_year
-Douze mois, 799 €
+Douze mois, 990 €
 
 ## sub.cta_wa
 Commencer sur WhatsApp
@@ -624,7 +624,7 @@ Chaque paiement produit une facture, avec TVA, envoyée à votre e-mail. Besoin 
 Comment vous payez
 
 ## account.pay
-Rosalia envoie un lien de paiement sécurisé pour la formule choisie : 99 € mois par mois ou 799 € pour douze mois. Pas de frais de mise en service si vous ajoutez vous-même le gestionnaire Google.
+Rosalia envoie un lien de paiement sécurisé pour la formule choisie : 99 € mois par mois ou 990 € pour douze mois. Pas de frais de mise en service si vous ajoutez vous-même le gestionnaire Google.
 
 ## account.cancel_title
 Comment résilier
@@ -653,7 +653,7 @@ Nous utilisons des outils d’IA pour aider à préparer des brouillons. Une per
 Conditions
 
 ## terms.body
-BabyRock Social gère les réponses d’une fiche d’établissement Google à 99 € par mois TTC, ou 799 € pour douze mois TTC. En vous abonnant et en nous invitant comme gestionnaire, vous nous autorisez à rédiger, relire, envoyer, modifier et, si nécessaire, supprimer des réponses sur cette fiche. L’IA peut aider au premier brouillon ; une personne vérifie et envoie chaque réponse. Les réponses aux avis 4 et 5 étoiles peuvent être envoyées avec cette autorisation continue. Celles des avis 1, 2 et 3 étoiles sont envoyées seulement après que vous les avez approuvées ou modifiées sur WhatsApp. Google relit chaque réponse et contrôle le moment où elle apparaît en public.
+BabyRock Social gère les réponses d’une fiche d’établissement Google à 99 € par mois TTC, ou 990 € pour douze mois TTC. En vous abonnant et en nous invitant comme gestionnaire, vous nous autorisez à rédiger, relire, envoyer, modifier et, si nécessaire, supprimer des réponses sur cette fiche. L’IA peut aider au premier brouillon ; une personne vérifie et envoie chaque réponse. Les réponses aux avis 4 et 5 étoiles peuvent être envoyées avec cette autorisation continue. Celles des avis 1, 2 et 3 étoiles sont envoyées seulement après que vous les avez approuvées ou modifiées sur WhatsApp. Google relit chaque réponse et contrôle le moment où elle apparaît en public.
 
 Vous pouvez résilier à la fin de la période payée en écrivant à Rosalia. Quand le service s’arrête, nous retirons notre accès gestionnaire. Nous pouvons suspendre le service si un paiement échoue. Le droit espagnol et les tribunaux de Barcelone s’appliquent, sauf règle impérative de consommation contraire.
 

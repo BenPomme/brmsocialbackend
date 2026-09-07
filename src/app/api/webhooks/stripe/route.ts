@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { stripeWebhookSecret } from "@/lib/env";
-import { fulfillCheckoutSession, retrieveCheckout } from "@/lib/pay";
+import { fulfillCheckoutSession, fulfillPaidInvoice, markSubscriptionDeleted, retrieveCheckout } from "@/lib/pay";
 import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -30,6 +31,12 @@ export async function POST(req: Request) {
       const session = await retrieveCheckout(id);
       const result = await fulfillCheckoutSession(session);
       console.log("stripe webhook", event.type, result);
+    } else if (event.type === "invoice.paid") {
+      const result = await fulfillPaidInvoice(event.data.object as Stripe.Invoice);
+      console.log("stripe webhook invoice.paid", result);
+    } else if (event.type === "customer.subscription.deleted") {
+      const id = (event.data.object as { id?: string }).id;
+      if (id) await markSubscriptionDeleted(id);
     } else if (event.type === "checkout.session.async_payment_failed") {
       console.warn("stripe webhook async payment failed", (event.data.object as { id?: string }).id);
     }

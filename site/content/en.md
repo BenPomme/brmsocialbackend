@@ -121,7 +121,7 @@ Someone leaves a review on your Google listing. We prepare a reply in the langua
 You do not send us your Google password. You add a BabyRock address as a manager of the listing.
 
 ## product.social_price_note
-€99 a month, including VAT. Or €799 a year.
+€99 a month, including VAT. Or €990 a year.
 
 ## product.social_cta
 I want BabyRock Social
@@ -158,7 +158,7 @@ Save time and never leave another Google review unanswered.
 VAT incl. / month
 
 ## product.social_price_detail
-Or €799 for 12 months. Save €389. Prices include Spanish VAT. No setup fee when you add us as a manager yourself.
+Or €990 for 12 months. Save €198. Prices include Spanish VAT. No setup fee when you add us as a manager yourself.
 
 ## products.social_cta
 Start BabyRock Social
@@ -323,7 +323,7 @@ Month to month
 Twelve months
 
 ## home.price_year_detail
-€799 for the year, including VAT, 33% less than paying month to month.
+€990 for the year, including VAT, less than paying month to month.
 
 ## home.price_year_save
 Save €389
@@ -440,7 +440,7 @@ Yearly extra, high
 of your year
 
 ## sim.note
-Gross extra revenue. BabyRock Social from 799 € a year.
+Gross extra revenue. BabyRock Social from 990 € a year.
 
 ## sim.cta
 Get my reviews handled
@@ -458,7 +458,7 @@ There is no new dashboard, no extra app, and we never ask for your Google passwo
 1. Tell us about your business
 
 ## how.step1
-Send Rosalia your business name and Google listing by WhatsApp or email. Choose €99 month to month or €799 for twelve months. She answers your questions and sends a secure payment link.
+Send Rosalia your business name and Google listing by WhatsApp or email. Choose €99 month to month or €990 for twelve months. She answers your questions and sends a secure payment link.
 
 ## how.step2_title
 2. Add us as a manager, not as an owner
@@ -516,7 +516,7 @@ On top of recovered no-shows we add WhatsApp as a booking and order channel. Com
 The percentages we use
 
 ## research.formula
-Yearly extra = monthly revenue × 12 × the percentage for your type and product. Figures are gross. BabyRock Social starts at 799 € a year.
+Yearly extra = monthly revenue × 12 × the percentage for your type and product. Figures are gross. BabyRock Social starts at 990 € a year.
 
 ## research.what_we_use
 Your shop can land outside the range. We would rather show a clear commercial number with the sources next to it than a 0.84% formula nobody can feel.
@@ -558,7 +558,7 @@ Send us your business name and Google listing. Rosalia will answer your question
 €99/month, including VAT
 
 ## sub.year
-€799 a year, including VAT. That is 33% less.
+€990 a year, including VAT. Less than paying month to month.
 
 ## sub.form_name
 Business name
@@ -585,7 +585,7 @@ Preferred plan
 Month to month, €99
 
 ## sub.plan_year
-Twelve months, €799
+Twelve months, €990
 
 ## sub.cta_wa
 Start on WhatsApp
@@ -618,7 +618,7 @@ Each payment produces an invoice, including VAT, sent to your email. Need anothe
 How you pay
 
 ## account.pay
-Rosalia sends a secure payment link for your chosen plan: €99 month to month or €799 for twelve months. There is no setup fee when you add the Google manager yourself.
+Rosalia sends a secure payment link for your chosen plan: €99 month to month or €990 for twelve months. There is no setup fee when you add the Google manager yourself.
 
 ## account.cancel_title
 How to cancel
@@ -647,7 +647,7 @@ We use AI tools to help prepare reply drafts. A person reviews and, where needed
 Terms
 
 ## terms.body
-BabyRock Social manages replies for one Google Business Profile at €99 per month including VAT, or €799 for twelve months including VAT. By subscribing and inviting BabyRock Social as a manager, you authorize us to draft, review, submit, edit and, when necessary, delete replies on that profile. AI may assist with the first draft; a person checks and submits every reply. Replies to 4 and 5-star reviews may be submitted under this ongoing authorization. Replies to 1, 2 and 3-star reviews are submitted only after you approve or revise them on WhatsApp. Google reviews each reply and controls when it goes public.
+BabyRock Social manages replies for one Google Business Profile at €99 per month including VAT, or €990 for twelve months including VAT. By subscribing and inviting BabyRock Social as a manager, you authorize us to draft, review, submit, edit and, when necessary, delete replies on that profile. AI may assist with the first draft; a person checks and submits every reply. Replies to 4 and 5-star reviews may be submitted under this ongoing authorization. Replies to 1, 2 and 3-star reviews are submitted only after you approve or revise them on WhatsApp. Google reviews each reply and controls when it goes public.
 
 You can cancel at the end of the paid period by writing to Rosalia. When the service ends, we remove our manager access. We may pause the service if a payment fails. Spanish law and the courts of Barcelona apply, unless a mandatory consumer rule says otherwise.
 

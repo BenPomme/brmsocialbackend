@@ -20,7 +20,7 @@ test("eval set has 240 labelled cases, 40 per launch language", () => {
 test("price and annual quotes match the catalogue; Sant Cugat is not granted from a model-only city", () => {
   const q = catalogQuoteResult(null);
   assert.equal(q.monthTtc, 9900);
-  assert.equal(q.yearTtc, 79900);
+  assert.equal(q.yearTtc, 99000);
   assert.equal(q.offer, null);
   const sc = catalogQuoteResult("Sant Cugat del Vallès");
   assert.ok(sc.offer);

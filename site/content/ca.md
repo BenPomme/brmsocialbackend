@@ -121,7 +121,7 @@ Algú deixa una ressenya a la vostra fitxa de Google. Preparem una resposta en l
 No ens doneu la contrasenya de Google. Afegiu una adreça BabyRock com a gestor de la fitxa.
 
 ## product.social_price_note
-99 € al mes, IVA inclòs. O 799 € a l’any.
+99 € al mes, IVA inclòs. O 990 € a l’any.
 
 ## product.social_cta
 Vull BabyRock Social
@@ -158,7 +158,7 @@ Estalvieu temps i no deixeu cap ressenya de Google sense resposta.
 IVA incl. / mes
 
 ## product.social_price_detail
-O 799 € per 12 mesos. Estalvieu 389 €. Preus amb IVA espanyol. Sense cost d’alta si ens afegiu com a gestors.
+O 990 € per 12 mesos. Estalvieu 198 €. Preus amb IVA espanyol. Sense cost d’alta si ens afegiu com a gestors.
 
 ## products.social_cta
 Començar BabyRock Social
@@ -323,7 +323,7 @@ Mes a mes
 Dotze mesos
 
 ## home.price_year_detail
-799 € a l’any, IVA inclòs, un 33 % menys que pagar mes a mes.
+990 € a l’any, IVA inclòs, menys que pagar mes a mes.
 
 ## home.price_year_save
 Estalvieu 389 €
@@ -440,7 +440,7 @@ Extra a l’any, alta
 del vostre any
 
 ## sim.note
-Ingressos extra bruts. BabyRock Social des de 799 € a l’any.
+Ingressos extra bruts. BabyRock Social des de 990 € a l’any.
 
 ## sim.cta
 Que s’ocupin de les meves ressenyes
@@ -458,7 +458,7 @@ No hi ha un altre tauler, no hi ha una altra aplicació, i mai no demanem la con
 1. Expliqueu-nos el negoci
 
 ## how.step1
-Envieu a la Rosalia el nom del negoci i la fitxa de Google per WhatsApp o correu. Trieu 99 € mes a mes o 799 € per dotze mesos. Ella respon les preguntes i envia un enllaç de pagament segur.
+Envieu a la Rosalia el nom del negoci i la fitxa de Google per WhatsApp o correu. Trieu 99 € mes a mes o 990 € per dotze mesos. Ella respon les preguntes i envia un enllaç de pagament segur.
 
 ## how.step2_title
 2. Afegiu-nos com a gestor, no com a propietari
@@ -516,7 +516,7 @@ Damunt de les absències recuperades sumem WhatsApp com a canal de reserva i de 
 Els percentatges que fem servir
 
 ## research.formula
-Extra anual = facturació mensual × 12 × el percentatge del vostre tipus i producte. Xifres brutes. BabyRock Social des de 799 € a l’any.
+Extra anual = facturació mensual × 12 × el percentatge del vostre tipus i producte. Xifres brutes. BabyRock Social des de 990 € a l’any.
 
 ## research.what_we_use
 El vostre comerç pot quedar fora del rang. Preferim un número comercial clar, amb les fonts al costat, que una fórmula del 0,84 % que ningú no sent.
@@ -558,7 +558,7 @@ Envieu-nos el nom del negoci i la fitxa de Google. La Rosalia respondrà les pre
 99 €/mes, IVA inclòs
 
 ## sub.year
-799 € a l’any, IVA inclòs. Això és un 33 % menys.
+990 € a l’any, IVA inclòs. Menys que pagar mes a mes.
 
 ## sub.form_name
 Nom del negoci
@@ -585,7 +585,7 @@ Pla preferit
 Mes a mes, 99 €
 
 ## sub.plan_year
-Dotze mesos, 799 €
+Dotze mesos, 990 €
 
 ## sub.cta_wa
 Començar per WhatsApp
@@ -618,7 +618,7 @@ Cada pagament produeix una factura, amb IVA, enviada al vostre correu. Necessite
 Com es paga
 
 ## account.pay
-La Rosalia envia un enllaç de pagament segur per al pla triat: 99 € mes a mes o 799 € per dotze mesos. No hi ha quota d’alta si vosaltres mateixos afegiu el gestor de Google.
+La Rosalia envia un enllaç de pagament segur per al pla triat: 99 € mes a mes o 990 € per dotze mesos. No hi ha quota d’alta si vosaltres mateixos afegiu el gestor de Google.
 
 ## account.cancel_title
 Com cancel·lar
@@ -647,7 +647,7 @@ Fem servir eines d’IA per ajudar a preparar esborranys. Una persona revisa i, 
 Condicions
 
 ## terms.body
-BabyRock Social gestiona les respostes d’una fitxa d’empresa de Google a 99 € al mes IVA inclòs, o 799 € per dotze mesos IVA inclòs. En subscriure-us i convidar-nos com a gestor, ens autoritzeu a redactar, revisar, enviar, editar i, si cal, esborrar respostes en aquesta fitxa. La IA pot ajudar amb el primer esborrany; una persona comprova i envia cada resposta. Les respostes a ressenyes de 4 i 5 estrelles es poden enviar amb aquesta autorització contínua. Les d’1, 2 i 3 estrelles s’envien només després que les aproveu o les canvieu per WhatsApp. Google revisa cada resposta i controla quan es veu en públic.
+BabyRock Social gestiona les respostes d’una fitxa d’empresa de Google a 99 € al mes IVA inclòs, o 990 € per dotze mesos IVA inclòs. En subscriure-us i convidar-nos com a gestor, ens autoritzeu a redactar, revisar, enviar, editar i, si cal, esborrar respostes en aquesta fitxa. La IA pot ajudar amb el primer esborrany; una persona comprova i envia cada resposta. Les respostes a ressenyes de 4 i 5 estrelles es poden enviar amb aquesta autorització contínua. Les d’1, 2 i 3 estrelles s’envien només després que les aproveu o les canvieu per WhatsApp. Google revisa cada resposta i controla quan es veu en públic.
 
 Podeu cancel·lar al final del període pagat escrivint a la Rosalia. Quan s’acaba el servei, treiem el nostre accés de gestor. Podem pausar el servei si un pagament falla. S’aplica la llei espanyola i els jutjats de Barcelona, llevat de norma imperativa de consum en un altre sentit.
 

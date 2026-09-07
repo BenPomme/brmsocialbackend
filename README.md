@@ -51,7 +51,7 @@ Postgres écoute sur **localhost:5433** (pas 5432, pour ne pas te marcher sur un
 
 ## Paiement Stripe (simu)
 
-Clés **test** dans `.env`. Checkout one-off **99 € TTC / mes**, **799 € TTC / año** (factura HT + IVA 21 %). Sant Cugat : `/pay` → mes gratis. SKUs : `npm run stripe:skus`.
+Clés **test** dans `.env`. Checkout **subscription** **99 € TTC / mes**, **990 € TTC / año** (factura HT + IVA 21 %). Sant Cugat : trial 30 j puis 99 €/mes. SKUs : `npm run stripe:skus`.
 
 1. `npm run dev`
 2. Admin → **Payer**, ou ouvre [http://localhost:3000/pay](http://localhost:3000/pay)

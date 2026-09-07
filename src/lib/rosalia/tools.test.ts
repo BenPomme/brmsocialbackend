@@ -15,7 +15,7 @@ test("catalogue quote is Social only, with month and year", () => {
   const q = catalogQuoteResult(null);
   assert.equal(q.productId, "social");
   assert.equal(q.monthLabel.includes("99"), true);
-  assert.equal(q.yearLabel.includes("799"), true);
+  assert.equal(q.yearLabel.includes("990"), true);
   assert.equal(q.offer, null);
 });
 

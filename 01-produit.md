@@ -17,9 +17,9 @@ Abonnement : on répond aux avis Google du commerce.
 
 Prix **TTC** (ce que le titulaire paie). Factura = HT + IVA 21 % ES.
 
-- **99 € TTC / mois** (81,82 € HT + 17,18 € IVA)
-- Douze mois : **799 € TTC / an** (660,33 € HT + 138,67 € IVA) — ~33 % vs 12 × 99
-- **Sant Cugat del Vallès** : 1er mois **0 €**, on rattrape les avis sans réponse des **3 mois** précédents, puis 99 € TTC / mois. Pas un abonnement Stripe auto : le 2e mois = lien de paiement.
+- **99 € TTC / mois** (81,82 € HT + 17,18 € IVA) — suscripción mensual Stripe
+- **990 € TTC / an** (818,18 € HT + 171,82 € IVA) — suscripción anual Stripe
+- **Sant Cugat del Vallès** : 1er mois **0 €** (trial Stripe 30 jours), rattrapage 3 mois d’avis, puis 99 € TTC / mois en suscripción.
 - Mise en service : **0 €** si le titulaire ajoute le gestionnaire Google lui-même
 
 France B2B avec n° TVA : autoliquidation, le titulaire paie le HT (81,82 / 660,33).

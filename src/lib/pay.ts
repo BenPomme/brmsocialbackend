@@ -199,8 +199,18 @@ export async function waitForInvoice(sessionId: string, attempts = 12) {
   return { session, invoice };
 }
 
+function subscriptionIdOf(session: Stripe.Checkout.Session) {
+  const sub = session.subscription;
+  if (!sub) return null;
+  return typeof sub === "string" ? sub : sub.id;
+}
+
 export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
-  if (session.payment_status !== "paid") {
+  const trialCheckout = session.mode === "subscription" && session.metadata?.trial === "santcugat";
+  const okStatus =
+    session.payment_status === "paid" ||
+    (session.mode === "subscription" && (session.payment_status === "no_payment_required" || trialCheckout));
+  if (!okStatus) {
     return { ok: false as const, reason: "not_paid" as const, paymentStatus: session.payment_status };
   }
   if (!session.livemode && stripeMode() === "live") {
@@ -213,18 +223,26 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
   if (!client) return { ok: false as const, reason: "client_missing" as const };
 
   const invoice = await resolveInvoice(session);
-  const existing = await prisma.paymentEvidence.findUnique({
-    where: { provider_providerPaymentId: { provider: "stripe", providerPaymentId: session.id } },
+  const ids = [session.id, invoice.id].filter((x): x is string => Boolean(x));
+  const existing = await prisma.paymentEvidence.findFirst({
+    where: { provider: "stripe", providerPaymentId: { in: ids } },
   });
   if (existing) {
     return { ok: true as const, clientId: client.id, already: true as const, invoice };
   }
 
-  const plan = session.metadata?.plan === "year" ? "year" : "month";
+  const plan = session.metadata?.plan === "avis_year" || session.metadata?.plan === "year" ? "year" : "month";
   const now = new Date();
-  const period = servicePeriod({ plan, from: now });
+  const period = servicePeriod({
+    plan: trialCheckout ? "trial_santcugat" : plan,
+    from: now,
+    trialEndsAt: trialCheckout ? new Date(now.getTime() + SANT_CUGAT_OFFER.trialDays * 24 * 60 * 60 * 1000) : null,
+  });
   const email = session.customer_details?.email ?? client.billingEmail ?? client.emailPublic;
   const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id ?? client.stripeCustomerId;
+  const subId = subscriptionIdOf(session);
+  const evidenceId = invoice.id ?? session.id;
+  const nextStatus = trialCheckout && session.payment_status !== "paid" ? "essai" : "paye";
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -232,7 +250,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
         data: {
           clientId: client.id,
           provider: "stripe",
-          providerPaymentId: session.id,
+          providerPaymentId: evidenceId,
           product: "social",
           interval: period.interval,
           amount: session.amount_total ?? null,
@@ -245,14 +263,15 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
       await tx.client.update({
         where: { id: client.id },
         data: {
-          status: "paye",
+          status: nextStatus,
           plan: plan === "year" ? "avis_year" : "avis_month",
-          trialEndsAt: null,
-          offer: client.status === "essai" ? client.offer : client.offer,
+          trialEndsAt: nextStatus === "essai" ? period.end : null,
+          offer: trialCheckout ? SANT_CUGAT_OFFER.id : client.offer,
           stripeOrBizumRef: session.id,
           emailPublic: email,
           billingEmail: email,
           stripeCustomerId: customerId,
+          stripeSubscriptionId: subId,
           stripeInvoiceId: invoice.id,
         },
       });
@@ -299,12 +318,96 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
   try {
     const { linkThreadToClient, emitRosaliaEvent } = await import("./rosalia-reply");
     await linkThreadToClient(client.id);
-    await emitRosaliaEvent({ clientId: client.id, event: { type: "payment_confirmed", via: "stripe" } });
+    await emitRosaliaEvent({
+      clientId: client.id,
+      event: { type: "payment_confirmed", via: nextStatus === "essai" ? "trial" : "stripe" },
+    });
   } catch (e) {
     console.warn("rosalia payment_confirmed", e);
   }
 
   return { ok: true as const, clientId: client.id, already: false as const, invoice, mailed };
+}
+
+export async function fulfillPaidInvoice(invoice: Stripe.Invoice) {
+  if (invoice.status !== "paid") {
+    return { ok: false as const, reason: "not_paid" as const };
+  }
+  if (!invoice.livemode && stripeMode() === "live") {
+    return { ok: false as const, reason: "test_payment_in_live" as const };
+  }
+  const sub = (invoice as Stripe.Invoice & { subscription?: string | { id: string } | null }).subscription;
+  const subId = typeof sub === "string" ? sub : sub && typeof sub === "object" ? sub.id : null;
+  const customerId = typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id ?? null;
+  const client = await prisma.client.findFirst({
+    where: {
+      OR: [
+        ...(subId ? [{ stripeSubscriptionId: subId }] : []),
+        ...(customerId ? [{ stripeCustomerId: customerId }] : []),
+      ],
+    },
+  });
+  if (!client) return { ok: false as const, reason: "client_missing" as const };
+
+  const existing = await prisma.paymentEvidence.findUnique({
+    where: { provider_providerPaymentId: { provider: "stripe", providerPaymentId: invoice.id } },
+  });
+  if (existing) return { ok: true as const, clientId: client.id, already: true as const };
+
+  const line = invoice.lines.data[0] as { price?: { recurring?: { interval?: string } | null } | null } | undefined;
+  const interval = line?.price?.recurring?.interval === "year" ? "year" : "month";
+  const periodStartUnix = (invoice as Stripe.Invoice & { period_start?: number }).period_start;
+  const period = servicePeriod({ plan: interval, from: new Date((periodStartUnix ?? 0) * 1000 || Date.now()) });
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentEvidence.create({
+      data: {
+        clientId: client.id,
+        provider: "stripe",
+        providerPaymentId: invoice.id,
+        product: "social",
+        interval: period.interval,
+        amount: invoice.amount_paid ?? null,
+        currency: invoice.currency ?? "eur",
+        livemode: invoice.livemode,
+        periodStart: period.start,
+        periodEnd: period.end,
+      },
+    });
+    await tx.client.update({
+      where: { id: client.id },
+      data: {
+        status: "paye",
+        trialEndsAt: null,
+        stripeInvoiceId: invoice.id,
+        stripeSubscriptionId: subId ?? client.stripeSubscriptionId,
+      },
+    });
+  });
+  return { ok: true as const, clientId: client.id, already: false as const };
+}
+
+export async function cancelStripeSubscription(clientId: string) {
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client?.stripeSubscriptionId) return { ok: false as const, reason: "no_subscription" as const };
+  const sub = await getStripe().subscriptions.update(client.stripeSubscriptionId, { cancel_at_period_end: true });
+  await prisma.client.update({ where: { id: client.id }, data: { status: "pause" } });
+  await prisma.action.create({
+    data: {
+      clientId: client.id,
+      type: "billing",
+      actor: "stripe",
+      result: "ok",
+      payload: { event: "cancel_at_period_end", subscriptionId: sub.id, cancelAt: sub.cancel_at },
+    },
+  });
+  return { ok: true as const, cancelAt: sub.cancel_at };
+}
+
+export async function markSubscriptionDeleted(subscriptionId: string) {
+  const client = await prisma.client.findFirst({ where: { stripeSubscriptionId: subscriptionId } });
+  if (!client) return { ok: false as const };
+  await prisma.client.update({ where: { id: client.id }, data: { status: "resilie" } });
+  return { ok: true as const, clientId: client.id };
 }
 
 export async function deliverInvoiceEmail(opts: {
@@ -505,7 +608,8 @@ export async function createTrialSantCugat(opts: BillingInput) {
 
 export async function createCheckoutSession(opts: BillingInput & { req: Request; plan: PayPlanId }) {
   if (opts.plan === "trial_santcugat") {
-    throw new Error("El mes gratis no pasa por Stripe. Use /api/pay/trial");
+    const city = opts.billingCity ?? opts.city;
+    if (!isSantCugat(city)) throw new Error("El mes gratis solo vale para Sant Cugat del Vallès");
   }
   if (!(opts.billingEmail ?? opts.email)?.trim()) throw new Error("Falta el correo");
   if (!(opts.name ?? opts.legalName)?.trim()) throw new Error("Falta el nombre del comercio");
@@ -520,10 +624,11 @@ export async function createCheckoutSession(opts: BillingInput & { req: Request;
   const sku = skuForPlan(opts.plan);
   const client = await resolvePayClient(opts);
   const vatMode = (client.vatMode as VatMode) || inferVatMode(client.billingCountry, client.taxId);
-  const amounts = planAmounts(opts.plan, vatMode);
+  const amounts = planAmounts(opts.plan === "trial_santcugat" ? "month" : opts.plan, vatMode);
   const origin = originFromRequest(opts.req);
   const stripe = getStripe();
   const customerId = await ensureStripeCustomer(client);
+  const interval = sku.interval;
 
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
     {
@@ -531,6 +636,7 @@ export async function createCheckoutSession(opts: BillingInput & { req: Request;
       price_data: {
         currency: "eur",
         unit_amount: amounts.ht,
+        recurring: { interval },
         product_data: { name: sku.label, description: sku.description },
       },
     },
@@ -541,6 +647,7 @@ export async function createCheckoutSession(opts: BillingInput & { req: Request;
       price_data: {
         currency: "eur",
         unit_amount: amounts.iva,
+        recurring: { interval },
         product_data: {
           name: `IVA ${IVA_PERCENT} %`,
           description: "IVA español 21 %. Deducible si su empresa está en ES.",
@@ -549,13 +656,10 @@ export async function createCheckoutSession(opts: BillingInput & { req: Request;
     });
   }
 
-  const invoiceFooter =
-    vatMode === "eu_reverse"
-      ? "Operación no sujeta / inversión del sujeto pasivo (Directiva 2006/112/CE). No Billing Stripe."
-      : "Factura. IVA 21 % sobre base imponible. Servicio mes a mes. No es un abono Stripe Billing.";
+  const trialDays = opts.plan === "trial_santcugat" ? SANT_CUGAT_OFFER.trialDays : undefined;
 
   const session = await stripe.checkout.sessions.create({
-    mode: "payment",
+    mode: "subscription",
     locale: "es",
     customer: customerId,
     customer_update: { name: "auto", address: "auto" },
@@ -567,21 +671,13 @@ export async function createCheckoutSession(opts: BillingInput & { req: Request;
       sku: sku.lookupKey,
       vatMode,
       source: "factory",
+      trial: trialDays ? "santcugat" : "",
+    },
+    subscription_data: {
+      metadata: { clientId: client.id, plan: sku.id, sku: sku.lookupKey },
+      ...(trialDays ? { trial_period_days: trialDays } : {}),
     },
     line_items: lineItems,
-    invoice_creation: {
-      enabled: true,
-      invoice_data: {
-        description: sku.label,
-        footer: invoiceFooter,
-        custom_fields: client.taxId
-          ? [
-              { name: "NIF/CIF", value: client.taxId },
-              { name: "Razón social", value: (client.legalName ?? client.name).slice(0, 140) },
-            ]
-          : undefined,
-      },
-    },
     success_url: `${origin}/pay/ok?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/pay?canceled=1&client=${client.id}`,
   });

@@ -52,6 +52,7 @@ model Client {
   billingCountry            String?  @map("billing_country")
   vatMode                   String?  @map("vat_mode")
   stripeCustomerId          String?  @map("stripe_customer_id")
+  stripeSubscriptionId      String?  @map("stripe_subscription_id")
   stripeInvoiceId           String?  @map("stripe_invoice_id")
   categoryId                String?  @map("category_id")
   category                  ScopeCategory? @relation(fields: [categoryId], references: [id])

@@ -121,6 +121,8 @@ export async function runRosaliaTool(
     if (!client || !isCommercialOk(client.status)) {
       return { ok: false, fact: { canceled: false }, speak: "There is no active paid period to stop." };
     }
+    const { cancelStripeSubscription } = await import("../pay");
+    await cancelStripeSubscription(client.id).catch(() => null);
     await prisma.client.update({ where: { id: client.id }, data: { status: "pause" } });
     await prisma.action.create({
       data: {

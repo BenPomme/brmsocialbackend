@@ -55,7 +55,7 @@ Script visé : site (ou `/pay`) → fiche + **données fiscales** → Checkout 4
 
 ## Fait (mardi 1er sept.) — Stripe sandbox
 
-Checkout `/pay`, clés test, factura NIF. Catalogue **TTC** : 99 €/mes, 799 €/an. Sant Cugat : 1er mois 0 € + rattrapage 3 mois. Pas de Billing 0,7 %.
+Checkout `/pay`, clés test, factura NIF. Catalogue **TTC** : **99 €/mes** suscripción, **990 €/an** suscripción. Sant Cugat : 1er mois 0 € (trial) + rattrapage 3 mois.
 
 ## Demain (mercredi 2 sept.) — même volume que mardi
 

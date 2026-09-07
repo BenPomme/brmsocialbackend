@@ -12,6 +12,7 @@ export type Sku = {
   productId: ProductId;
   lookupKey: string;
   ttc: number;
+  interval: "month" | "year";
   label: string;
   description: string;
 };
@@ -22,16 +23,18 @@ export const SKUS: Record<SkuId, Sku> = {
     productId: "social",
     lookupKey: "avis_month",
     ttc: 9900,
+    interval: "month",
     label: "BabyRock Social — mes a mes",
-    description: "99 € IVA incl. al mes. Respuestas a reseñas de Google.",
+    description: "99 € IVA incl. al mes. Suscripción mensual. Respuestas a reseñas de Google.",
   },
   avis_year: {
     id: "avis_year",
     productId: "social",
     lookupKey: "avis_year",
-    ttc: 79900,
-    label: "BabyRock Social — doce meses",
-    description: "799 € IVA incl. al año. Un tercio menos que pagar mes a mes.",
+    ttc: 99000,
+    interval: "year",
+    label: "BabyRock Social — anual",
+    description: "990 € IVA incl. al año. Suscripción anual.",
   },
 };
 

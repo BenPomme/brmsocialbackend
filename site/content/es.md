@@ -121,7 +121,7 @@ Alguien deja una reseña en su ficha de Google. Preparamos una respuesta en el i
 No nos da la contraseña de Google. Añade una dirección BabyRock como gestor de la ficha.
 
 ## product.social_price_note
-99 € al mes, IVA incluido. O 799 € al año.
+99 € al mes, IVA incluido. O 990 € al año.
 
 ## product.social_cta
 Quiero BabyRock Social
@@ -158,7 +158,7 @@ Ahorre tiempo y no deje ninguna reseña de Google sin respuesta.
 IVA incl. / mes
 
 ## product.social_price_detail
-O 799 € por 12 meses. Ahorre 389 €. Precios con IVA español. Sin coste de alta si nos añade usted como gestor.
+O 990 € por 12 meses. Ahorre 198 €. Precios con IVA español. Sin coste de alta si nos añade usted como gestor.
 
 ## products.social_cta
 Empezar BabyRock Social
@@ -323,7 +323,7 @@ Mes a mes
 Doce meses
 
 ## home.price_year_detail
-799 € al año, IVA incluido, un 33 % menos que pagar mes a mes.
+990 € al año, IVA incluido, un 33 % menos que pagar mes a mes.
 
 ## home.price_year_save
 Ahorre 389 €
@@ -440,7 +440,7 @@ Extra al año, alta
 de su año
 
 ## sim.note
-Ingresos extra brutos. BabyRock Social desde 799 € al año.
+Ingresos extra brutos. BabyRock Social desde 990 € al año.
 
 ## sim.cta
 Que se ocupen de mis reseñas
@@ -458,7 +458,7 @@ No hay otro panel, no hay otra aplicación, y nunca pedimos su contraseña de Go
 1. Cuéntenos su negocio
 
 ## how.step1
-Envíe a Rosalia el nombre del negocio y la ficha de Google por WhatsApp o correo. Elija 99 € mes a mes o 799 € por doce meses. Ella responde a las preguntas y envía un enlace de pago seguro.
+Envíe a Rosalia el nombre del negocio y la ficha de Google por WhatsApp o correo. Elija 99 € mes a mes o 990 € por doce meses. Ella responde a las preguntas y envía un enlace de pago seguro.
 
 ## how.step2_title
 2. Añádanos como gestor, no como propietario
@@ -516,7 +516,7 @@ Encima de las ausencias recuperadas sumamos WhatsApp como canal de reserva y de 
 Los porcentajes que usamos
 
 ## research.formula
-Extra anual = facturación mensual × 12 × el porcentaje de su tipo y producto. Cifras brutas. BabyRock Social desde 799 € al año.
+Extra anual = facturación mensual × 12 × el porcentaje de su tipo y producto. Cifras brutas. BabyRock Social desde 990 € al año.
 
 ## research.what_we_use
 Su comercio puede quedar fuera del rango. Preferimos un número comercial claro, con las fuentes al lado, que una fórmula del 0,84 % que nadie siente.
@@ -558,7 +558,7 @@ Envíenos el nombre del negocio y la ficha de Google. Rosalia responderá a las 
 99 €/mes, IVA incluido
 
 ## sub.year
-799 € al año, IVA incluido. Eso es un 33 % menos.
+990 € al año, IVA incluido. Menos que pagar mes a mes.
 
 ## sub.form_name
 Nombre del negocio
@@ -585,7 +585,7 @@ Plan preferido
 Mes a mes, 99 €
 
 ## sub.plan_year
-Doce meses, 799 €
+Doce meses, 990 €
 
 ## sub.cta_wa
 Empezar por WhatsApp
@@ -618,7 +618,7 @@ Cada pago produce una factura, con IVA, enviada a su correo. ¿Necesita otra cop
 Cómo se paga
 
 ## account.pay
-Rosalia envía un enlace de pago seguro para el plan elegido: 99 € mes a mes o 799 € por doce meses. No hay cuota de alta si usted mismo añade el gestor de Google.
+Rosalia envía un enlace de pago seguro para el plan elegido: 99 € mes a mes o 990 € por doce meses. No hay cuota de alta si usted mismo añade el gestor de Google.
 
 ## account.cancel_title
 Cómo cancelar
@@ -647,7 +647,7 @@ Usamos herramientas de IA para ayudar a preparar borradores. Una persona revisa 
 Condiciones
 
 ## terms.body
-BabyRock Social gestiona las respuestas de una ficha de empresa de Google a 99 € al mes IVA incluido, o 799 € por doce meses IVA incluido. Al suscribirse e invitarnos como gestor, nos autoriza a redactar, revisar, enviar, editar y, si hace falta, borrar respuestas en esa ficha. La IA puede ayudar con el primer borrador; una persona comprueba y envía cada respuesta. Las respuestas a reseñas de 4 y 5 estrellas pueden enviarse con esta autorización continua. Las de 1, 2 y 3 estrellas se envían solo después de que usted las apruebe o las cambie por WhatsApp. Google revisa cada respuesta y controla cuándo se ve en público.
+BabyRock Social gestiona las respuestas de una ficha de empresa de Google a 99 € al mes IVA incluido, o 990 € por doce meses IVA incluido. Al suscribirse e invitarnos como gestor, nos autoriza a redactar, revisar, enviar, editar y, si hace falta, borrar respuestas en esa ficha. La IA puede ayudar con el primer borrador; una persona comprueba y envía cada respuesta. Las respuestas a reseñas de 4 y 5 estrellas pueden enviarse con esta autorización continua. Las de 1, 2 y 3 estrellas se envían solo después de que usted las apruebe o las cambie por WhatsApp. Google revisa cada respuesta y controla cuándo se ve en público.
 
 Puede cancelar al final del periodo pagado escribiendo a Rosalia. Cuando termina el servicio, quitamos nuestro acceso de gestor. Podemos pausar el servicio si un pago falla. Se aplica la ley española y los juzgados de Barcelona, salvo norma imperativa de consumo en otro sentido.
 
