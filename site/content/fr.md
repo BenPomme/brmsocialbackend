@@ -127,7 +127,7 @@ Quelqu’un laisse un avis sur votre fiche Google. Nous préparons une réponse 
 Vous n’envoyez pas votre mot de passe Google. Vous ajoutez une adresse BabyRock en gestionnaire de la fiche.
 
 ## product.social_price_note
-99 € par mois, TTC. Ou 990 € par an.
+Abonnement mensuel 99 €, TTC. Ou abonnement annuel 990 €.
 
 ## product.social_cta
 Je veux BabyRock Social
@@ -164,7 +164,7 @@ Gagnez du temps et ne laissez plus aucun avis Google sans réponse.
 TTC / mois
 
 ## product.social_price_detail
-Ou 990 € pour 12 mois. Économisez 198 €. Prix TTC en Espagne. Pas de frais d’installation si vous nous ajoutez comme gestionnaire.
+Ou abonnement annuel 990 €. Économisez 198 €. Prix TTC en Espagne. Pas de frais d’installation si vous nous ajoutez comme gestionnaire.
 
 ## products.social_cta
 Démarrer BabyRock Social
@@ -233,7 +233,7 @@ Un seul suivi après une visite confirmée, sans incitation et sans filtrer qui 
 Plus tard sur la feuille de route, pas inclus au lancement : commandes WhatsApp sans commission de marketplace, le chat de la fiche d’établissement Google et des points d’entrée QR imprimés.
 
 ## products.offer
-Offre de lancement à Sant Cugat : le premier mois est offert, avec des réponses à jusqu’à 20 avis sans réponse des trois mois précédents. Ensuite 99 € / mois, TTC en Espagne. Le deuxième mois n’est pas prélevé tout seul : vous recevez un lien de paiement si vous choisissez de continuer.
+Offre de lancement à Sant Cugat : le premier mois est offert, avec des réponses à jusqu’à 20 avis sans réponse des trois mois précédents. Ensuite l’abonnement mensuel de 99 € est prélevé tout seul, TTC en Espagne.
 
 ## home.for_whom_title
 Si les clients vous trouvent sur Google, ce service est pour vous
@@ -320,19 +320,19 @@ S’il faut expliquer ce qui s’est passé, changer le texte ou poser une quest
 BabyRock Social : les formules
 
 ## home.price_month_name
-Mois par mois
+Abonnement mensuel
 
 ## home.price_month_detail
-99 € par mois, TTC. Si vous résiliez avant le prochain prélèvement, le service s’arrête à la fin du mois déjà payé.
+99 € par mois, TTC. Prélevé chaque mois. Si vous résiliez avant le prochain prélèvement, le service s’arrête à la fin du mois déjà payé.
 
 ## home.price_year_name
-Douze mois
+Abonnement annuel
 
 ## home.price_year_detail
-990 € pour l’année, TTC, moins que de payer mois par mois.
+990 € par an, TTC. Prélevé chaque année. 198 € de moins que 12 mois à 99 €.
 
 ## home.price_year_save
-Économisez 389 €
+Économisez 198 €
 
 ## home.price_setup
 Pas de frais de mise en service si vous nous ajoutez vous-même à votre fiche d’établissement Google. On ne prélève rien sur ce site : Rosalia vous envoie un lien de paiement sécurisé.
@@ -464,7 +464,7 @@ Il n’y a pas d’autre tableau de bord, pas d’application en plus, et nous n
 1. Parlez-nous de votre commerce
 
 ## how.step1
-Envoyez à Rosalia le nom du commerce et la fiche Google par WhatsApp ou e-mail. Choisissez 99 € mois par mois ou 990 € pour douze mois. Elle répond aux questions et envoie un lien de paiement sécurisé.
+Envoyez à Rosalia le nom du commerce et la fiche Google par WhatsApp ou e-mail. Choisissez l’abonnement mensuel à 99 € ou l’abonnement annuel à 990 €. Elle répond aux questions et envoie un lien de paiement sécurisé.
 
 ## how.step2_title
 2. Ajoutez-nous comme gestionnaire, pas comme propriétaire
@@ -564,7 +564,7 @@ Envoyez-nous le nom du commerce et la fiche Google. Rosalia répondra aux questi
 99 €/mois, TTC
 
 ## sub.year
-990 € par an, TTC. Moins que de payer mois par mois.
+990 € par an, TTC. Abonnement annuel. 198 € de moins que de payer mois par mois.
 
 ## sub.form_name
 Nom du commerce
@@ -588,10 +588,10 @@ Chiffre d’affaires mensuel, si vous avez utilisé le calculateur (facultatif)
 Formule souhaitée
 
 ## sub.plan_month
-Mois par mois, 99 €
+Abonnement mensuel, 99 €
 
 ## sub.plan_year
-Douze mois, 990 €
+Abonnement annuel, 990 €
 
 ## sub.cta_wa
 Commencer sur WhatsApp
@@ -624,7 +624,7 @@ Chaque paiement produit une facture, avec TVA, envoyée à votre e-mail. Besoin 
 Comment vous payez
 
 ## account.pay
-Rosalia envoie un lien de paiement sécurisé pour la formule choisie : 99 € mois par mois ou 990 € pour douze mois. Pas de frais de mise en service si vous ajoutez vous-même le gestionnaire Google.
+Rosalia envoie un lien de paiement sécurisé pour la formule choisie : 99 € par mois (abonnement mensuel) ou 990 € par an (abonnement annuel). Pas de frais de mise en service si vous ajoutez vous-même le gestionnaire Google.
 
 ## account.cancel_title
 Comment résilier
@@ -653,7 +653,7 @@ Nous utilisons des outils d’IA pour aider à préparer des brouillons. Une per
 Conditions
 
 ## terms.body
-BabyRock Social gère les réponses d’une fiche d’établissement Google à 99 € par mois TTC, ou 990 € pour douze mois TTC. En vous abonnant et en nous invitant comme gestionnaire, vous nous autorisez à rédiger, relire, envoyer, modifier et, si nécessaire, supprimer des réponses sur cette fiche. L’IA peut aider au premier brouillon ; une personne vérifie et envoie chaque réponse. Les réponses aux avis 4 et 5 étoiles peuvent être envoyées avec cette autorisation continue. Celles des avis 1, 2 et 3 étoiles sont envoyées seulement après que vous les avez approuvées ou modifiées sur WhatsApp. Google relit chaque réponse et contrôle le moment où elle apparaît en public.
+BabyRock Social gère les réponses d’une fiche d’établissement Google à 99 € par mois TTC (abonnement mensuel), ou 990 € par an TTC (abonnement annuel). En vous abonnant et en nous invitant comme gestionnaire, vous nous autorisez à rédiger, relire, envoyer, modifier et, si nécessaire, supprimer des réponses sur cette fiche. L’IA peut aider au premier brouillon ; une personne vérifie et envoie chaque réponse. Les réponses aux avis 4 et 5 étoiles peuvent être envoyées avec cette autorisation continue. Celles des avis 1, 2 et 3 étoiles sont envoyées seulement après que vous les avez approuvées ou modifiées sur WhatsApp. Google relit chaque réponse et contrôle le moment où elle apparaît en public.
 
 Vous pouvez résilier à la fin de la période payée en écrivant à Rosalia. Quand le service s’arrête, nous retirons notre accès gestionnaire. Nous pouvons suspendre le service si un paiement échoue. Le droit espagnol et les tribunaux de Barcelone s’appliquent, sauf règle impérative de consommation contraire.
 

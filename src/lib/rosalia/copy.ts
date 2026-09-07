@@ -125,16 +125,16 @@ Rosalia — Babyrock Social`,
 {{PAY}}`,
   },
   price: {
-    es: `{{PRICE_MONTH}} al mes, mes a mes (sin permanencia de 3 meses). Doce meses: {{PRICE_YEAR}}. 4–5★ las publicamos; 1–3★ usted dice OK o cambia el texto.
+    es: `{{PRICE_MONTH}} al mes, suscripción mensual (sin permanencia). Suscripción anual: {{PRICE_YEAR}}, se cobra cada año. 4–5★ las publicamos; 1–3★ usted dice OK o cambia el texto.
 
 {{OFFER}}{{CITY_HINT}}{{PAY}}`,
-    ca: `{{PRICE_MONTH}} al mes, mes a mes (sense permanència de 3 mesos). Dotze mesos: {{PRICE_YEAR}}. 4–5★ les publiquem; 1–3★ vostè diu OK o canvia el text.
+    ca: `{{PRICE_MONTH}} al mes, subscripció mensual (sense permanència). Subscripció anual: {{PRICE_YEAR}}, es cobra cada any. 4–5★ les publiquem; 1–3★ vostè diu OK o canvia el text.
 
 {{OFFER}}{{CITY_HINT}}{{PAY}}`,
-    en: `{{PRICE_MONTH}} per month, month to month (no 3-month lock-in). Twelve months: {{PRICE_YEAR}}. We publish 4–5★; 1–3★ you say OK or edit the text.
+    en: `{{PRICE_MONTH}} per month, monthly subscription (no lock-in). Yearly subscription: {{PRICE_YEAR}}, billed every year. We publish 4–5★; 1–3★ you say OK or edit the text.
 
 {{OFFER}}{{CITY_HINT}}{{PAY}}`,
-    fr: `{{PRICE_MONTH}} par mois, sans engagement de 3 mois. Douze mois : {{PRICE_YEAR}}. 4–5★ : on publie ; 1–3★ : vous dites OK ou vous corrigez.
+    fr: `{{PRICE_MONTH}} par mois, abonnement mensuel (sans engagement). Abonnement annuel : {{PRICE_YEAR}}, prélevé chaque année. 4–5★ : on publie ; 1–3★ : vous dites OK ou vous corrigez.
 
 {{OFFER}}{{CITY_HINT}}{{PAY}}`,
   },

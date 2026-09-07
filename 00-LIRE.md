@@ -19,7 +19,7 @@ Ce dossier local = l’usine. `origin` = [brmsocialbackend](https://github.com/B
 
 Lien entre les deux, à brancher :
 - WhatsApp du site (`wa.me` vers le numéro Babyrock **de prod**, pas le 555 test) → Meta → webhook usine `/api/webhooks/whatsapp`.
-- S’abonner : le site pointe vers `/pay` sur l’usine (Checkout Stripe one-off). L’usine marque `clients.status = paye`. Le site n’encaisse pas.
+- S’abonner : le site pointe vers `/pay` sur l’usine (Checkout Stripe **subscription** : 99 €/mes ou 990 €/an). L’usine marque `clients.status = paye`. Le site n’encaisse pas.
 
 ## Fichiers
 
@@ -62,7 +62,7 @@ Checkout `/pay`, clés test, factura NIF. Catalogue **TTC** : **99 €/mes** sus
 Bloc principal = facture B2B. Un resto doit pouvoir **mettre la factura sur la société et récupérer la TVA**. Aujourd’hui `/pay` ne collecte que nom + e-mail : insuffisant.
 
 1. **Identité fiscale sur `/pay` et `clients`** (voir `05-donnees.md`) : razón social, NIF/CIF ou n° TVA UE, adresse fiscale (ligne, CP, ville, pays), e-mail de facturation. Pays ES → IVA 21 % sur 99 TTC (81,82 HT). Ne pas allumer Stripe Tax (0,5 %) demain.
-2. **Facture Stripe PDF** : Customer + `tax_id` + adresse, `invoice_creation` sur le Checkout **one-off** (toujours pas Billing). Après 4242, le PDF a le nom légal et le NIF. Admin : voir / renvoyer la facture.
+2. **Facture Stripe PDF** : Customer + `tax_id` + adresse, facture d’abonnement (Checkout `mode: subscription`). Après 4242, le PDF a le nom légal et le NIF. Admin : voir / renvoyer la facture.
 3. **Lien de paiement par WhatsApp** : Rosalia envoie l’URL Checkout (ou `/pay` prérempli) via Cloud API, **allowlist seulement** (toi + partenaire si son n° est dans Meta To). Pas un resto. Réutiliser `whatsapp-send.ts`.
 4. **Script démo écrit** (ordre des clics, comptes proto, ce qu’on ne montre pas : KYC, 555, Billing).
 5. **File opérateur + client** : un 5★ dry-run et un 2★ → OK → `pret`, sans surprise au clic.

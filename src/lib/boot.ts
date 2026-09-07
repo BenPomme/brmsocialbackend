@@ -65,7 +65,7 @@ export function printBootChecklist() {
   if (!c.STRIPE_SECRET_KEY) {
     lines.push("  No Stripe: /pay will 503. Add STRIPE_SECRET_KEY (test is enough to simulate).", "");
   } else if (c.stripeMode === "test") {
-    lines.push("  Stripe test mode. Open /pay, card 4242. Not Billing 0.7 % — one-off Checkout.", "");
+    lines.push("  Stripe test mode. Open /pay, card 4242. Subscription Checkout: 99 €/mes or 990 €/año.", "");
   }
   lines.push("============================================================");
   console.log(lines.join("\n"));

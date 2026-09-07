@@ -121,7 +121,7 @@ Someone leaves a review on your Google listing. We prepare a reply in the langua
 You do not send us your Google password. You add a BabyRock address as a manager of the listing.
 
 ## product.social_price_note
-€99 a month, including VAT. Or €990 a year.
+Monthly subscription €99, including VAT. Or yearly subscription €990.
 
 ## product.social_cta
 I want BabyRock Social
@@ -158,7 +158,7 @@ Save time and never leave another Google review unanswered.
 VAT incl. / month
 
 ## product.social_price_detail
-Or €990 for 12 months. Save €198. Prices include Spanish VAT. No setup fee when you add us as a manager yourself.
+Or a yearly subscription of €990. Save €198. Prices include Spanish VAT. No setup fee when you add us as a manager yourself.
 
 ## products.social_cta
 Start BabyRock Social
@@ -227,7 +227,7 @@ Send one follow-up after a confirmed visit, with no incentives and no review gat
 Later on the roadmap, not included at launch: WhatsApp orders without marketplace commission, Google Business Profile chat and printed QR entry points.
 
 ## products.offer
-Sant Cugat launch offer: your first month is free, including replies to up to 20 unanswered reviews from the previous three months. Then €99/month, including Spanish VAT. The second month is not charged automatically: you receive a payment link if you choose to continue.
+Sant Cugat launch offer: your first month is free, including replies to up to 20 unanswered reviews from the previous three months. Then the €99 monthly subscription is charged automatically, including Spanish VAT.
 
 ## home.for_whom_title
 If customers find you on Google, this service is for you
@@ -314,19 +314,19 @@ If you need to explain what happened, change the wording, or ask a question, wri
 BabyRock Social: the plans
 
 ## home.price_month_name
-Month to month
+Monthly subscription
 
 ## home.price_month_detail
-€99 per month, including VAT. Cancel before your next billing period and the service ends when the current paid month finishes.
+€99 per month, including VAT. Billed every month. Cancel before the next charge and the service ends when the current paid month finishes.
 
 ## home.price_year_name
-Twelve months
+Yearly subscription
 
 ## home.price_year_detail
-€990 for the year, including VAT, less than paying month to month.
+€990 a year, including VAT. Billed every year. €198 less than paying 12 months at €99.
 
 ## home.price_year_save
-Save €389
+Save €198
 
 ## home.price_setup
 No setup fee when you add us to your Google Business Profile yourself. You will not be charged on this website: Rosalia sends you a secure payment link.
@@ -458,7 +458,7 @@ There is no new dashboard, no extra app, and we never ask for your Google passwo
 1. Tell us about your business
 
 ## how.step1
-Send Rosalia your business name and Google listing by WhatsApp or email. Choose €99 month to month or €990 for twelve months. She answers your questions and sends a secure payment link.
+Send Rosalia your business name and Google listing by WhatsApp or email. Choose the €99 monthly subscription or the €990 yearly subscription. She answers your questions and sends a secure payment link.
 
 ## how.step2_title
 2. Add us as a manager, not as an owner
@@ -558,7 +558,7 @@ Send us your business name and Google listing. Rosalia will answer your question
 €99/month, including VAT
 
 ## sub.year
-€990 a year, including VAT. Less than paying month to month.
+€990 a year, including VAT. Yearly subscription. €198 less than paying month to month.
 
 ## sub.form_name
 Business name
@@ -582,10 +582,10 @@ Monthly revenue, if you used the calculator (optional)
 Preferred plan
 
 ## sub.plan_month
-Month to month, €99
+Monthly subscription, €99
 
 ## sub.plan_year
-Twelve months, €990
+Yearly subscription, €990
 
 ## sub.cta_wa
 Start on WhatsApp
@@ -618,7 +618,7 @@ Each payment produces an invoice, including VAT, sent to your email. Need anothe
 How you pay
 
 ## account.pay
-Rosalia sends a secure payment link for your chosen plan: €99 month to month or €990 for twelve months. There is no setup fee when you add the Google manager yourself.
+Rosalia sends a secure payment link for your chosen plan: €99 per month (monthly subscription) or €990 per year (yearly subscription). There is no setup fee when you add the Google manager yourself.
 
 ## account.cancel_title
 How to cancel
@@ -647,7 +647,7 @@ We use AI tools to help prepare reply drafts. A person reviews and, where needed
 Terms
 
 ## terms.body
-BabyRock Social manages replies for one Google Business Profile at €99 per month including VAT, or €990 for twelve months including VAT. By subscribing and inviting BabyRock Social as a manager, you authorize us to draft, review, submit, edit and, when necessary, delete replies on that profile. AI may assist with the first draft; a person checks and submits every reply. Replies to 4 and 5-star reviews may be submitted under this ongoing authorization. Replies to 1, 2 and 3-star reviews are submitted only after you approve or revise them on WhatsApp. Google reviews each reply and controls when it goes public.
+BabyRock Social manages replies for one Google Business Profile at €99 per month including VAT (monthly subscription), or €990 per year including VAT (yearly subscription). By subscribing and inviting BabyRock Social as a manager, you authorize us to draft, review, submit, edit and, when necessary, delete replies on that profile. AI may assist with the first draft; a person checks and submits every reply. Replies to 4 and 5-star reviews may be submitted under this ongoing authorization. Replies to 1, 2 and 3-star reviews are submitted only after you approve or revise them on WhatsApp. Google reviews each reply and controls when it goes public.
 
 You can cancel at the end of the paid period by writing to Rosalia. When the service ends, we remove our manager access. We may pause the service if a payment fails. Spanish law and the courts of Barcelona apply, unless a mandatory consumer rule says otherwise.
 

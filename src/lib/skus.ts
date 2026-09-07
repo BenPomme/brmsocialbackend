@@ -24,8 +24,8 @@ export const SKUS: Record<SkuId, Sku> = {
     lookupKey: "avis_month",
     ttc: 9900,
     interval: "month",
-    label: "BabyRock Social — mes a mes",
-    description: "99 € IVA incl. al mes. Suscripción mensual. Respuestas a reseñas de Google.",
+    label: "BabyRock Social — suscripción mensual",
+    description: "99 € IVA incl. al mes. Suscripción mensual. Se renueva sola. Respuestas a reseñas de Google.",
   },
   avis_year: {
     id: "avis_year",
@@ -33,8 +33,8 @@ export const SKUS: Record<SkuId, Sku> = {
     lookupKey: "avis_year",
     ttc: 99000,
     interval: "year",
-    label: "BabyRock Social — anual",
-    description: "990 € IVA incl. al año. Suscripción anual.",
+    label: "BabyRock Social — suscripción anual",
+    description: "990 € IVA incl. al año. Suscripción anual. Se renueva sola.",
   },
 };
 

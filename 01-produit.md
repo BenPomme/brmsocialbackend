@@ -22,7 +22,7 @@ Prix **TTC** (ce que le titulaire paie). Factura = HT + IVA 21 % ES.
 - **Sant Cugat del Vallès** : 1er mois **0 €** (trial Stripe 30 jours), rattrapage 3 mois d’avis, puis 99 € TTC / mois en suscripción.
 - Mise en service : **0 €** si le titulaire ajoute le gestionnaire Google lui-même
 
-France B2B avec n° TVA : autoliquidation, le titulaire paie le HT (81,82 / 660,33).
+France B2B avec n° TVA : autoliquidation, le titulaire paie le HT (81,82 / 818,18).
 
 Inclus :
 

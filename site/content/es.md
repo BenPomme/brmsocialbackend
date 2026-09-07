@@ -121,7 +121,7 @@ Alguien deja una reseña en su ficha de Google. Preparamos una respuesta en el i
 No nos da la contraseña de Google. Añade una dirección BabyRock como gestor de la ficha.
 
 ## product.social_price_note
-99 € al mes, IVA incluido. O 990 € al año.
+Suscripción mensual 99 €, IVA incluido. O suscripción anual 990 €.
 
 ## product.social_cta
 Quiero BabyRock Social
@@ -158,7 +158,7 @@ Ahorre tiempo y no deje ninguna reseña de Google sin respuesta.
 IVA incl. / mes
 
 ## product.social_price_detail
-O 990 € por 12 meses. Ahorre 198 €. Precios con IVA español. Sin coste de alta si nos añade usted como gestor.
+O suscripción anual 990 €. Ahorre 198 €. Precios con IVA español. Sin coste de alta si nos añade usted como gestor.
 
 ## products.social_cta
 Empezar BabyRock Social
@@ -227,7 +227,7 @@ Un solo seguimiento después de una visita confirmada, sin incentivos y sin filt
 Más adelante en la hoja de ruta, no incluido al lanzar: pedidos por WhatsApp sin comisión de marketplace, el chat de Google Business Profile y puntos de entrada con QR impreso.
 
 ## products.offer
-Oferta de lanzamiento en Sant Cugat: el primer mes es gratis, con respuestas a hasta 20 reseñas sin respuesta de los tres meses anteriores. Luego 99 € al mes, IVA español incluido. El segundo mes no se cobra solo: recibe un enlace de pago si quiere continuar.
+Oferta de lanzamiento en Sant Cugat: el primer mes es gratis, con respuestas a hasta 20 reseñas sin respuesta de los tres meses anteriores. Luego la suscripción mensual de 99 € se cobra sola, IVA español incluido.
 
 ## home.for_whom_title
 Si los clientes le encuentran en Google, este servicio es para usted
@@ -314,19 +314,19 @@ Si hay que explicar lo que pasó, cambiar el texto o hacer una pregunta, escriba
 BabyRock Social: las fórmulas
 
 ## home.price_month_name
-Mes a mes
+Suscripción mensual
 
 ## home.price_month_detail
-99 € al mes, IVA incluido. Si cancela antes del siguiente cobro, el servicio termina al final del mes ya pagado.
+99 € al mes, IVA incluido. Se cobra cada mes. Si cancela antes del siguiente cobro, el servicio termina al final del mes ya pagado.
 
 ## home.price_year_name
-Doce meses
+Suscripción anual
 
 ## home.price_year_detail
-990 € al año, IVA incluido, un 33 % menos que pagar mes a mes.
+990 € al año, IVA incluido. Se cobra cada año. 198 € menos que pagar 12 meses a 99 €.
 
 ## home.price_year_save
-Ahorre 389 €
+Ahorre 198 €
 
 ## home.price_setup
 Sin cuota de alta si usted mismo nos añade a su ficha de empresa de Google. En esta web no se cobra: Rosalia le envía un enlace de pago seguro.
@@ -458,7 +458,7 @@ No hay otro panel, no hay otra aplicación, y nunca pedimos su contraseña de Go
 1. Cuéntenos su negocio
 
 ## how.step1
-Envíe a Rosalia el nombre del negocio y la ficha de Google por WhatsApp o correo. Elija 99 € mes a mes o 990 € por doce meses. Ella responde a las preguntas y envía un enlace de pago seguro.
+Envíe a Rosalia el nombre del negocio y la ficha de Google por WhatsApp o correo. Elija la suscripción mensual de 99 € o la anual de 990 €. Ella responde a las preguntas y envía un enlace de pago seguro.
 
 ## how.step2_title
 2. Añádanos como gestor, no como propietario
@@ -558,7 +558,7 @@ Envíenos el nombre del negocio y la ficha de Google. Rosalia responderá a las 
 99 €/mes, IVA incluido
 
 ## sub.year
-990 € al año, IVA incluido. Menos que pagar mes a mes.
+990 € al año, IVA incluido. Suscripción anual. 198 € menos que pagar mes a mes.
 
 ## sub.form_name
 Nombre del negocio
@@ -582,10 +582,10 @@ Facturación mensual, si usó la calculadora (opcional)
 Plan preferido
 
 ## sub.plan_month
-Mes a mes, 99 €
+Suscripción mensual, 99 €
 
 ## sub.plan_year
-Doce meses, 990 €
+Suscripción anual, 990 €
 
 ## sub.cta_wa
 Empezar por WhatsApp
@@ -618,7 +618,7 @@ Cada pago produce una factura, con IVA, enviada a su correo. ¿Necesita otra cop
 Cómo se paga
 
 ## account.pay
-Rosalia envía un enlace de pago seguro para el plan elegido: 99 € mes a mes o 990 € por doce meses. No hay cuota de alta si usted mismo añade el gestor de Google.
+Rosalia envía un enlace de pago seguro para el plan elegido: 99 € al mes (suscripción mensual) o 990 € al año (suscripción anual). No hay cuota de alta si usted mismo añade el gestor de Google.
 
 ## account.cancel_title
 Cómo cancelar
@@ -647,7 +647,7 @@ Usamos herramientas de IA para ayudar a preparar borradores. Una persona revisa 
 Condiciones
 
 ## terms.body
-BabyRock Social gestiona las respuestas de una ficha de empresa de Google a 99 € al mes IVA incluido, o 990 € por doce meses IVA incluido. Al suscribirse e invitarnos como gestor, nos autoriza a redactar, revisar, enviar, editar y, si hace falta, borrar respuestas en esa ficha. La IA puede ayudar con el primer borrador; una persona comprueba y envía cada respuesta. Las respuestas a reseñas de 4 y 5 estrellas pueden enviarse con esta autorización continua. Las de 1, 2 y 3 estrellas se envían solo después de que usted las apruebe o las cambie por WhatsApp. Google revisa cada respuesta y controla cuándo se ve en público.
+BabyRock Social gestiona las respuestas de una ficha de empresa de Google a 99 € al mes IVA incluido (suscripción mensual), o 990 € al año IVA incluido (suscripción anual). Al suscribirse e invitarnos como gestor, nos autoriza a redactar, revisar, enviar, editar y, si hace falta, borrar respuestas en esa ficha. La IA puede ayudar con el primer borrador; una persona comprueba y envía cada respuesta. Las respuestas a reseñas de 4 y 5 estrellas pueden enviarse con esta autorización continua. Las de 1, 2 y 3 estrellas se envían solo después de que usted las apruebe o las cambie por WhatsApp. Google revisa cada respuesta y controla cuándo se ve en público.
 
 Puede cancelar al final del periodo pagado escribiendo a Rosalia. Cuando termina el servicio, quitamos nuestro acceso de gestor. Podemos pausar el servicio si un pago falla. Se aplica la ley española y los juzgados de Barcelona, salvo norma imperativa de consumo en otro sentido.
 
