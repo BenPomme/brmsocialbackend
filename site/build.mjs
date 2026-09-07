@@ -667,7 +667,7 @@ function simulatorPage(locale, copy, depth) {
   </section>`;
 }
 
-function howPage(copy, depth) {
+function howPage(locale, copy, depth) {
   const steps = [
     ["step-whatsapp.jpg", "how.step1_title", "how.step1"],
     ["step-manager.jpg", "how.step2_title", "how.step2"],
@@ -683,7 +683,15 @@ function howPage(copy, depth) {
         .map(([img, titleKey, body], i) => {
           const { n, title } = splitStepTitle(t(copy, titleKey));
           const num = n || String(i + 1);
-          return `<details class="story-card"${i === 0 ? " open" : ""}>
+          const videoLabel = t(copy, "how.step2_video");
+          const video = i === 1
+            ? `<figure class="story-video">
+          <video controls playsinline preload="metadata" poster="${asset(depth, `videos/manager-${locale}.jpg`)}" title="${esc(videoLabel)}" aria-label="${esc(videoLabel)}" width="1080" height="1920">
+            <source src="${asset(depth, `videos/manager-${locale}.mp4`)}" type="video/mp4">
+          </video>
+        </figure>`
+            : "";
+          return `<details class="story-card"${i === 1 ? " open" : ""}>
         <summary>
           <img src="${asset(depth, "illustrations/" + img)}" alt="" width="72" height="72" loading="lazy">
           <span class="story-num">${esc(num)}</span>
@@ -691,6 +699,7 @@ function howPage(copy, depth) {
         </summary>
         <div class="story-copy">
           ${paras(t(copy, body))}
+          ${video}
         </div>
       </details>`;
         })
@@ -997,7 +1006,7 @@ for (const locale of Object.keys(LOCALES)) {
     services: { depth: 2, body: servicesPage(locale, copy, config, 2) },
     guides: { depth: 2, body: guidesIndexPage(locale, copy, config, 2) },
     simulator: { depth: 2, body: simulatorPage(locale, copy, 2) },
-    how: { depth: 2, body: howPage(copy, 2) },
+    how: { depth: 2, body: howPage(locale, copy, 2) },
     research: { depth: 2, body: researchPage(copy, config) },
     about: { depth: 2, body: aboutPage(copy, 2) },
     subscribe: { depth: 2, body: subscribePage(locale, copy, config, 2) },

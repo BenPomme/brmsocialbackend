@@ -972,6 +972,27 @@ textarea {
   margin: 0;
   font-size: 0.95rem;
 }
+.story-video {
+  margin: 1rem 0 0.15rem;
+  max-width: min(22rem, 100%);
+}
+.story-video video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  border-radius: 0.85rem;
+  background: #111;
+  display: block;
+}
+@media (max-width: 759px) {
+  .story-copy:has(.story-video) {
+    padding-left: 1rem;
+  }
+  .story-video {
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+}
 
 .note {
   background: var(--tab);
