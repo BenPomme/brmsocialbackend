@@ -29,6 +29,8 @@ export function envChecklist() {
     STRIPE_PUBLISHABLE_KEY: Boolean(read("STRIPE_PUBLISHABLE_KEY")),
     STRIPE_WEBHOOK_SECRET: Boolean(read("STRIPE_WEBHOOK_SECRET")),
     stripeMode: stripeMode(),
+    GOOGLE_GBP_REFRESH_TOKEN: Boolean(read("GOOGLE_GBP_REFRESH_TOKEN")),
+    FOUNDER_WHATSAPP: Boolean(read("FOUNDER_WHATSAPP")),
   };
 }
 
@@ -112,4 +114,24 @@ export function appUrl() {
 
 export function siteUrl() {
   return read("SITE_URL") ?? "https://www.babyrock.ai";
+}
+
+export function founderWhatsapp() {
+  return read("FOUNDER_WHATSAPP");
+}
+
+export function gbpClientId() {
+  return read("GOOGLE_GBP_CLIENT_ID");
+}
+
+export function gbpClientSecret() {
+  return read("GOOGLE_GBP_CLIENT_SECRET");
+}
+
+export function gbpRefreshToken() {
+  return read("GOOGLE_GBP_REFRESH_TOKEN");
+}
+
+export function gbpAccountName() {
+  return read("GOOGLE_GBP_ACCOUNT_NAME");
 }

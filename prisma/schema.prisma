@@ -306,6 +306,10 @@ model InboxThread {
   onboardingStep String? @map("onboarding_step")
   lastInboundAt DateTime? @map("last_inbound_at")
   city          String?
+  mapsUri       String?  @map("maps_uri")
+  listingName   String?  @map("listing_name")
+  listingAddress String? @map("listing_address")
+  askedMapsAt   DateTime? @map("asked_maps_at")
   leadId        String?  @map("lead_id")
   lead          Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
   clientId      String?  @map("client_id")

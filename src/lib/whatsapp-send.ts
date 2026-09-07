@@ -43,14 +43,14 @@ export class WhatsappSendError extends Error {
   }
 }
 
-export async function sendWhatsappText(to: string, body: string) {
+export async function sendWhatsappText(to: string, body: string, opts?: { ignoreAllowlist?: boolean }) {
   const token = read("WHATSAPP_TOKEN");
   const phoneId = read("WHATSAPP_PHONE_NUMBER_ID");
   if (!token || !phoneId) {
     throw new WhatsappSendError("WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID missing");
   }
   const recipient = digitsOnly(to);
-  if (!isWhatsappAllowlisted(recipient)) {
+  if (!opts?.ignoreAllowlist && !isWhatsappAllowlisted(recipient)) {
     throw new WhatsappSendError(
       `WhatsApp allowlist — refused to send to ${recipient}. Add the number to WHATSAPP_ALLOWLIST.`,
     );

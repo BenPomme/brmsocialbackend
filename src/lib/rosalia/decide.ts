@@ -443,18 +443,46 @@ export function decideRosalia(input: DecideInput): RosaliaDecision {
   }
 
   if (event.type === "payment_confirmed") {
+    if (input.managerInviteStatus === "accepted") {
+      return base(input, quote, lang, {
+        kind: "ok",
+        source: "template",
+        faqId: "in_business",
+        body: fill("in_business", lang, input, quote),
+        status: "ok",
+        phase: "active",
+        onboardingStep: "done",
+        sendPolicy: "if_window",
+        applyClientReply: null,
+      });
+    }
     return onboardingStart(input, quote, lang, event.via);
   }
 
   if (event.type === "manager_connected") {
+    const paid = isCommercialOk(input.clientStatus);
     return base(input, quote, lang, {
       kind: "ok",
       source: "template",
-      faqId: "in_business",
-      body: fill("in_business", lang, input, quote),
+      faqId: paid ? "in_business" : "manager_accepted_unpaid",
+      body: fill(paid ? "in_business" : "manager_accepted_unpaid", lang, input, quote),
       status: "ok",
-      phase: "active",
-      onboardingStep: "done",
+      phase: paid ? "active" : "awaiting_pay",
+      onboardingStep: paid ? "done" : input.onboardingStep,
+      sendPolicy: "if_window",
+      applyClientReply: null,
+    });
+  }
+
+  if (event.type === "manager_owner_declined") {
+    return base(input, quote, lang, {
+      kind: "text",
+      source: "template",
+      faqId: "manager_owner_wrong",
+      body: fill("manager_owner_wrong", lang, input, quote),
+      status: "ok",
+      phase: input.phase,
+      onboardingStep: input.onboardingStep,
       sendPolicy: "if_window",
       applyClientReply: null,
     });

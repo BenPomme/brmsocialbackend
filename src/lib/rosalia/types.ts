@@ -13,6 +13,7 @@ export type RosaliaEvent =
   | { type: "inbound_media"; media: "image" | "audio" | "video" | "sticker" | "document" | "other" }
   | { type: "payment_confirmed"; via: "stripe" | "trial" }
   | { type: "manager_connected" }
+  | { type: "manager_owner_declined" }
   | {
       type: "low_star";
       avisId: string;

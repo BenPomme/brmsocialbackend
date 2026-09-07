@@ -423,3 +423,41 @@ test("manager_connected is the in-business trigger", () => {
   assert.equal(d.faqId, "in_business");
   assert.match(d.body, /reviews@babyrock\.ai/);
 });
+
+test("manager_connected without payment walks them to pay", () => {
+  const d = decideRosalia({
+    ...seed({
+      phase: "outreach",
+      clientStatus: "lead",
+      preferredLang: "es",
+      lastInboundAt: new Date(),
+    }),
+    event: { type: "manager_connected" },
+  });
+  assert.equal(d.faqId, "manager_accepted_unpaid");
+  assert.equal(d.phase, "awaiting_pay");
+  assert.match(d.body, /\/pay/);
+});
+
+test("payment after manager already accepted starts work, not gestor walkthrough", () => {
+  const d = decideRosalia({
+    ...seed({
+      phase: "awaiting_pay",
+      managerInviteStatus: "accepted",
+      clientStatus: "paye",
+      preferredLang: "en",
+    }),
+    event: { type: "payment_confirmed", via: "stripe" },
+  });
+  assert.equal(d.faqId, "in_business");
+  assert.equal(d.phase, "active");
+});
+
+test("owner invite is declined in copy", () => {
+  const d = decideRosalia({
+    ...seed({ preferredLang: "en" }),
+    event: { type: "manager_owner_declined" },
+  });
+  assert.equal(d.faqId, "manager_owner_wrong");
+  assert.match(d.body, /Owner/i);
+});

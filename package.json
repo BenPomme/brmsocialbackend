@@ -18,7 +18,8 @@
     "factory": "bash scripts/boot-factory.sh",
     "wa:register": "tsx scripts/register-whatsapp-webhook.ts",
     "stripe:skus": "tsx scripts/stripe-sync-skus.ts",
-    "test": "tsx --test src/lib/fiche/*.test.ts src/lib/catalog.test.ts src/lib/rosalia/*.test.ts src/lib/pipeline.test.ts src/lib/whatsapp-send.test.ts src/lib/billing-state.test.ts src/lib/history.test.ts src/lib/whatsapp-verify.test.ts src/lib/pay-patch.test.ts src/lib/capability.test.ts"
+    "gbp:oauth": "tsx scripts/gbp-oauth.ts",
+    "test": "tsx --test src/lib/fiche/*.test.ts src/lib/catalog.test.ts src/lib/listing.test.ts src/lib/rosalia/*.test.ts src/lib/pipeline.test.ts src/lib/whatsapp-send.test.ts src/lib/billing-state.test.ts src/lib/history.test.ts src/lib/whatsapp-verify.test.ts src/lib/pay-patch.test.ts src/lib/capability.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

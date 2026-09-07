@@ -6,4 +6,6 @@ export async function register() {
   startFicheWatchLoop();
   const { startWaInboundLoop } = await import("@/lib/wa-inbound-loop");
   startWaInboundLoop();
+  const { startGbpInviteLoop } = await import("@/lib/gbp-loop");
+  startGbpInviteLoop();
 }

@@ -70,6 +70,9 @@ export async function runJob(jobId: string) {
     } else if (job.kind === "wa_inbound") {
       const { processWaInboundEvent } = await import("./whatsapp-accept");
       result = (await processWaInboundEvent(String(payload.eventId))) as unknown as Prisma.InputJsonValue;
+    } else if (job.kind === "gbp_invites") {
+      const { pollGbpInvitations } = await import("./manager-invite");
+      result = (await pollGbpInvitations()) as unknown as Prisma.InputJsonValue;
     } else if (job.kind === "scope") {
       result = { note: "scope is interactive, not a worker" };
     } else {

@@ -25,6 +25,7 @@ function PayForm() {
   const [name, setName] = useState(params.get("name") ?? "");
   const [email, setEmail] = useState(params.get("email") ?? "");
   const [whatsapp, setWhatsapp] = useState(params.get("wa") ?? "");
+  const [mapsUri, setMapsUri] = useState(params.get("maps") ?? "");
   const [billingCity, setBillingCity] = useState(params.get("city") ?? "");
   const [companyInvoice, setCompanyInvoice] = useState(false);
   const [legalName, setLegalName] = useState(params.get("legalName") ?? "");
@@ -57,6 +58,7 @@ function PayForm() {
       if (s.name) setName(s.name);
       if (s.email) setEmail(s.email);
       if (s.whatsapp) setWhatsapp(s.whatsapp);
+      if (s.mapsUri) setMapsUri(s.mapsUri);
       if (s.city) setBillingCity(s.city);
       if (s.plan) setPlan(s.plan);
       if (s.clientId) setClientId(s.clientId);
@@ -85,6 +87,7 @@ function PayForm() {
       email,
       billingEmail: email,
       whatsapp,
+      mapsUri,
       city: billingCity,
       billingCity,
       billingCountry,
@@ -102,6 +105,7 @@ function PayForm() {
       name,
       email,
       whatsapp,
+      mapsUri,
       billingCity,
       billingCountry,
       companyInvoice,
@@ -226,7 +230,7 @@ function PayForm() {
               />
             </label>
             <label className="block text-sm">
-              WhatsApp
+              WhatsApp que usa con Rosalía
               <input
                 type="tel"
                 className="mt-1 w-full rounded-lg border border-line bg-paper px-3 py-2"
@@ -234,6 +238,15 @@ function PayForm() {
                 onChange={(e) => setWhatsapp(e.target.value)}
                 placeholder="+34 600 000 000"
                 required
+              />
+            </label>
+            <label className="block text-sm">
+              Enlace de Google Maps (opcional)
+              <input
+                className="mt-1 w-full rounded-lg border border-line bg-paper px-3 py-2"
+                value={mapsUri}
+                onChange={(e) => setMapsUri(e.target.value)}
+                placeholder="https://maps.app.goo.gl/…"
               />
             </label>
             <label className="block text-sm">

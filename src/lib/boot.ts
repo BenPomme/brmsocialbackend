@@ -22,6 +22,8 @@ export function printBootChecklist() {
     `  SESSION_SECRET          = ${mark(c.SESSION_SECRET)}`,
     `  STRIPE_SECRET_KEY       = ${mark(c.STRIPE_SECRET_KEY)} (${c.stripeMode})`,
     `  STRIPE_WEBHOOK_SECRET   = ${mark(c.STRIPE_WEBHOOK_SECRET, true)}`,
+    `  GOOGLE_GBP_REFRESH_TOKEN= ${mark(Boolean(process.env.GOOGLE_GBP_REFRESH_TOKEN?.trim()), true)}`,
+    `  FOUNDER_WHATSAPP        = ${mark(Boolean(process.env.FOUNDER_WHATSAPP?.trim()), true)}`,
     `  XAI_MODEL               = ${c.XAI_MODEL}`,
     "",
     "  Refusing outbound workers:",
@@ -66,6 +68,9 @@ export function printBootChecklist() {
     lines.push("  No Stripe: /pay will 503. Add STRIPE_SECRET_KEY (test is enough to simulate).", "");
   } else if (c.stripeMode === "test") {
     lines.push("  Stripe test mode. Open /pay, card 4242. Subscription Checkout: 99 €/mes or 990 €/año.", "");
+  }
+  if (!process.env.GOOGLE_GBP_REFRESH_TOKEN?.trim()) {
+    lines.push("  No GBP OAuth: manager invites are not auto-accepted. npx tsx scripts/gbp-oauth.ts as reviews@.", "");
   }
   lines.push("============================================================");
   console.log(lines.join("\n"));

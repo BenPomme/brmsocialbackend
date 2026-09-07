@@ -322,6 +322,11 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session) {
       clientId: client.id,
       event: { type: "payment_confirmed", via: nextStatus === "essai" ? "trial" : "stripe" },
     });
+    const fresh = await prisma.client.findUnique({ where: { id: client.id } });
+    if (fresh?.managerInviteStatus === "accepted") {
+      const { importCatchupReviews } = await import("./catchup-reviews");
+      await importCatchupReviews(client.id).catch((err) => console.warn("catchup after pay", err));
+    }
   } catch (e) {
     console.warn("rosalia payment_confirmed", e);
   }
@@ -595,6 +600,11 @@ export async function createTrialSantCugat(opts: BillingInput) {
     const { linkThreadToClient, emitRosaliaEvent } = await import("./rosalia-reply");
     await linkThreadToClient(updated.id);
     await emitRosaliaEvent({ clientId: updated.id, event: { type: "payment_confirmed", via: "trial" } });
+    const fresh = await prisma.client.findUnique({ where: { id: updated.id } });
+    if (fresh?.managerInviteStatus === "accepted") {
+      const { importCatchupReviews } = await import("./catchup-reviews");
+      await importCatchupReviews(updated.id).catch((err) => console.warn("catchup after trial", err));
+    }
   } catch (e) {
     console.warn("rosalia trial_started", e);
   }

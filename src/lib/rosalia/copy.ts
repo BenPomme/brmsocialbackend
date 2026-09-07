@@ -323,10 +323,36 @@ Pour commencer : {{PAY}}`,
     fr: `L’invitation Google ne nous est pas encore arrivée. Vérifiez : e-mail {{MANAGER}}, rôle Gestionnaire (pas propriétaire), et le compte titulaire de la fiche.`,
   },
   in_business: {
-    es: `Google ha aceptado a {{MANAGER}} como gestor. Ya estamos en marcha: respondemos las 4–5★; las 1–3★ le llegan aquí para un OK.`,
-    ca: `Google ha acceptat {{MANAGER}} com a gestor. Ja estem en marxa: responem les 4–5★; les 1–3★ li arriben aquí per un OK.`,
-    en: `Google accepted {{MANAGER}} as manager. We’re in business: we handle 4–5★; 1–3★ come here for your OK.`,
-    fr: `Google a accepté {{MANAGER}} comme gestionnaire. On est lancés : 4–5★ on s’en charge ; 1–3★ vous arrivent ici pour un OK.`,
+    es: `Hemos recibido y aceptado la invitación a {{MANAGER}}. Gracias: empezamos a trabajar en su cuenta ahora. Las 4–5★ las publicamos; las 1–3★ le llegan aquí para un OK.`,
+    ca: `Hem rebut i acceptat la invitació a {{MANAGER}}. Gràcies: comencem a treballar en el compte ara. Les 4–5★ les publiquem; les 1–3★ li arriben aquí per un OK.`,
+    en: `We’ve received and accepted the invite to {{MANAGER}}. Thanks — we’ll start working on your account now. We publish 4–5★; 1–3★ come here for your OK.`,
+    fr: `Nous avons reçu et accepté l’invitation à {{MANAGER}}. Merci : nous commençons à travailler sur votre compte maintenant. 4–5★ on publie ; 1–3★ vous arrivent ici pour un OK.`,
+  },
+  manager_accepted_unpaid: {
+    es: `Hemos recibido y aceptado la invitación a {{MANAGER}} como gestor. Empezamos a trabajar cuando el pago (o el mes gratis de la suscripción) esté hecho.
+
+{{PAY}}`,
+    ca: `Hem rebut i acceptat la invitació a {{MANAGER}} com a gestor. Comencem a treballar quan el pagament (o el mes de franc de la subscripció) estigui fet.
+
+{{PAY}}`,
+    en: `We’ve received and accepted the {{MANAGER}} manager invite. We’ll start working once payment is done (or the free month of the subscription has started).
+
+{{PAY}}`,
+    fr: `Nous avons reçu et accepté l’invitation gestionnaire {{MANAGER}}. Nous commençons dès que le paiement est fait (ou le mois offert de l’abonnement a commencé).
+
+{{PAY}}`,
+  },
+  manager_owner_wrong: {
+    es: `La invitación a {{MANAGER}} llegó como Propietario, no como Gestor. La hemos rechazado: es un error. Vuelva a invitarnos como Gestor / Manager (no propietario).`,
+    ca: `La invitació a {{MANAGER}} ha arribat com a Propietari, no com a Gestor. L’hem rebutjada: és un error. Torneu a convidar-nos com a Gestor / Manager (no propietari).`,
+    en: `The invite to {{MANAGER}} came as Owner, not Manager. We declined it — that’s a mistake. Please invite us again as Manager (not owner).`,
+    fr: `L’invitation à {{MANAGER}} est arrivée en Propriétaire, pas Gestionnaire. Nous l’avons refusée : c’est une erreur. Réinvitez-nous comme Gestionnaire / Manager (pas propriétaire).`,
+  },
+  ask_maps: {
+    es: `¿Le importaría compartirme el enlace de Google Maps de su establecimiento, o el nombre y la dirección?`,
+    ca: `Li faria res compartir-me l’enllaç de Google Maps del seu establiment, o el nom i l’adreça?`,
+    en: `Would you mind sharing the Google Maps link of your establishment, or its name and address?`,
+    fr: `Pourriez-vous me partager le lien Google Maps de votre établissement, ou son nom et son adresse ?`,
   },
   off_catalog: {
     es: `Eso no lo vendemos ahora. BabyRock Social = responder reseñas de Google, {{PRICE_MONTH}}/mes. BabyRock Direct (WhatsApp de sus clientes) viene más adelante. Instagram, SEO o anuncios, no.

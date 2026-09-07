@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       email,
       city,
       whatsapp,
+      mapsUri: str(body.mapsUri),
       legalName: company ? str(body.legalName) : null,
       taxId: company ? str(body.taxId) : null,
       billingEmail: email,

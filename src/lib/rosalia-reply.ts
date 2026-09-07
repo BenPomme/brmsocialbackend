@@ -9,7 +9,8 @@ import { xaiComplete, xaiFastModel } from "./xai";
 import { isWhatsappAllowlisted, sendWhatsappText } from "./whatsapp-send";
 import { isAllowlisted, sendZohoMail } from "./zoho-mail";
 import { classifyInbound } from "./classify-inbound";
-import { hasScript } from "./rosalia/copy";
+import { hasScript, txt } from "./rosalia/copy";
+import { extractListingHint } from "./listing";
 import { decideRosalia, decisionFromScript, shouldSendNow } from "./rosalia/decide";
 import { guessLocale } from "./rosalia/lang";
 import { coerceRoute, isRoutable, nextOnboard, repeats, talkPrompt } from "./rosalia/route";
@@ -29,7 +30,7 @@ function isLocalHost(url: string) {
   return /localhost|127\.0\.0\.1/.test(url);
 }
 
-export function payUrl(opts?: { wa?: string | null; city?: string | null }) {
+export function payUrl(opts?: { wa?: string | null; city?: string | null; maps?: string | null }) {
   const candidates = [
     process.env.PAY_PUBLIC_URL,
     process.env.APP_URL,
@@ -42,6 +43,7 @@ export function payUrl(opts?: { wa?: string | null; city?: string | null }) {
   const url = new URL(`${base.replace(/\/pay$/i, "")}/pay`);
   if (opts?.wa) url.searchParams.set("wa", opts.wa.replace(/\D/g, ""));
   if (opts?.city) url.searchParams.set("city", opts.city);
+  if (opts?.maps) url.searchParams.set("maps", opts.maps);
   if (opts?.city && isSantCugat(opts.city)) url.searchParams.set("plan", "trial_santcugat");
   return url.toString();
 }
@@ -160,7 +162,7 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
       )
     : false;
 
-  const link = payUrl({ wa: thread.counterparty, city });
+  const link = payUrl({ wa: thread.counterparty, city, maps: thread.mapsUri });
   const decideOpts = {
     event,
     outboundBodies: allOutbound,
@@ -349,6 +351,53 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
       replySource = "off_script";
     }
   }
+
+  if (event.type === "inbound_text") {
+    const hint = extractListingHint(event.text);
+    if (hint.mapsUri || hint.listingName || hint.listingAddress) {
+      await prisma.inboxThread.update({
+        where: { id: thread.id },
+        data: {
+          ...(hint.mapsUri ? { mapsUri: hint.mapsUri } : {}),
+          ...(hint.listingName ? { listingName: hint.listingName } : {}),
+          ...(hint.listingAddress ? { listingAddress: hint.listingAddress } : {}),
+        },
+      });
+      thread.mapsUri = hint.mapsUri ?? thread.mapsUri;
+      thread.listingName = hint.listingName ?? thread.listingName;
+      thread.listingAddress = hint.listingAddress ?? thread.listingAddress;
+      if (client && hint.mapsUri) {
+        await prisma.client.update({
+          where: { id: client.id },
+          data: {
+            mapsUri: hint.mapsUri,
+            ...(hint.listingAddress ? { formattedAddress: hint.listingAddress } : {}),
+          },
+        }).catch(() => null);
+      }
+    }
+  }
+
+  const shouldAskMaps =
+    event.type === "inbound_text" &&
+    (asPhase(thread.phase) === "outreach" || asPhase(thread.phase) === "awaiting_pay") &&
+    !thread.askedMapsAt &&
+    !thread.mapsUri &&
+    !thread.listingName &&
+    decided.faqId !== "stop" &&
+    decided.status !== "stop" &&
+    !extractListingHint(event.type === "inbound_text" ? event.text : "").mapsUri;
+
+  if (shouldAskMaps && decided.body) {
+    const ask = txt("ask_maps", decided.lang, { city, payUrl: link });
+    if (!decided.body.includes(ask)) {
+      decided = { ...decided, body: `${decided.body}\n\n${ask}` };
+    }
+    await prisma.inboxThread.update({
+      where: { id: thread.id },
+      data: { askedMapsAt: new Date() },
+    });
+  }
   const body = decided.body;
 
   const existing = await prisma.inboxMessage.findUnique({ where: { providerId: draftId(thread.id) } });
@@ -443,7 +492,7 @@ export async function proposeRosaliaReply(threadId: string, eventOverride?: Rosa
   };
 }
 
-export async function deliverRosaliaDraft(threadId: string, textOverride?: string) {
+export async function deliverRosaliaDraft(threadId: string, textOverride?: string, opts?: { pause?: boolean }) {
   const thread = await prisma.inboxThread.findUnique({
     where: { id: threadId },
     include: { messages: { where: { direction: "draft" }, take: 1 } },
@@ -463,7 +512,6 @@ export async function deliverRosaliaDraft(threadId: string, textOverride?: strin
       direction: "out",
     });
     if (draft) await prisma.inboxMessage.delete({ where: { id: draft.id } }).catch(() => null);
-    await prisma.inboxThread.update({ where: { id: threadId }, data: { humanPaused: true } }).catch(() => null);
     return { channel: "whatsapp" as const, providerId: sent.providerId };
   }
 
