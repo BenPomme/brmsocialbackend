@@ -263,7 +263,7 @@ Fisioteràpia
 Club
 
 ## home.sim_title
-Si pagueu, quant més ganeu?
+Vegeu quant podríeu guanyar si us subscriviu
 
 ## home.sim_lead
 Ingressos extra a l’any. Baixa i alta, dels estudis que fem servir. No és una promesa.
@@ -377,10 +377,10 @@ També porteu el WhatsApp del meu comerç?
 Encara no. Això serà BabyRock Direct: els vostres clients escriuen al vostre número, no al nostre. El WhatsApp que feu servir amb nosaltres avui és només el fil amb BabyRock Social, per a les ressenyes delicades i el recapitulatiu setmanal.
 
 ## sim.headline
-Si pagueu, quant més ganeu?
+Vegeu quant podríeu guanyar si us subscriviu
 
 ## sim.lead
-Tres preguntes. Ingressos extra a l’any, baixa i alta. Si pagueu, això és l’extra que estimem.
+Tres preguntes. Ingressos extra a l’any, baixa i alta. Si us subscriviu, això és l’extra que estimem.
 
 ## sim.revenue
 Facturació mensual, en euros
@@ -465,6 +465,9 @@ Envieu a la Rosalia el nom del negoci i la fitxa de Google per WhatsApp o correu
 
 ## how.step2
 Inviteu reviews@babyrock.ai com a gestor de la vostra fitxa d’empresa de Google. Mai no demanem la contrasenya del titular. Continueu al capdavant i ens podeu treure l’accés quan vulgueu.
+
+## how.step2_video
+Com afegir reviews@babyrock.ai com a gestor de Google
 
 ## how.step3_title
 3. Preparem, revisem i publiquem cada resposta

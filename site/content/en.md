@@ -263,7 +263,7 @@ Physio
 Club
 
 ## home.sim_title
-If you pay, how much more do you make?
+See how much you could earn if you subscribe
 
 ## home.sim_lead
 Yearly extra revenue. Low and high from the studies we use. Not a promise.
@@ -377,10 +377,10 @@ Do you also run my shop’s WhatsApp?
 Not yet. That will be BabyRock Direct: your customers write to your number, not ours. The WhatsApp you use with us today is only the thread with BabyRock Social, for sensitive reviews and the weekly recap.
 
 ## sim.headline
-If you pay, how much more do you make?
+See how much you could earn if you subscribe
 
 ## sim.lead
-Three questions. Yearly extra revenue, low and high. If you pay, this is the extra we estimate you make.
+Three questions. Yearly extra revenue, low and high. If you subscribe, this is the extra we estimate you could earn.
 
 ## sim.revenue
 Monthly revenue, in euros
@@ -465,6 +465,9 @@ Send Rosalia your business name and Google listing by WhatsApp or email. Choose 
 
 ## how.step2
 Invite reviews@babyrock.ai as a manager of your Google Business Profile. We never ask for your owner password. You stay in control and can remove our access whenever you want.
+
+## how.step2_video
+How to add reviews@babyrock.ai as a Google manager
 
 ## how.step3_title
 3. We prepare, check and publish each reply

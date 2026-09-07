@@ -263,7 +263,7 @@ Fisioterapia
 Club
 
 ## home.sim_title
-Si paga, ¿cuánto más gana?
+Vea cuánto podría ganar si se suscribe
 
 ## home.sim_lead
 Ingresos extra al año. Baja y alta, de los estudios que usamos. No es una promesa.
@@ -377,10 +377,10 @@ Escriba BAJA o «quiero parar» a Rosalia por WhatsApp. Confirmamos, seguimos ha
 Todavía no. Eso será BabyRock Direct: sus clientes escriben a su número, no al nuestro. El WhatsApp que usa con nosotros hoy es solo el hilo con BabyRock Social, para las reseñas delicadas y el recapitulativo semanal.
 
 ## sim.headline
-Si paga, ¿cuánto más gana?
+Vea cuánto podría ganar si se suscribe
 
 ## sim.lead
-Tres preguntas. Ingresos extra al año, baja y alta. Si paga, esto es el extra que estimamos.
+Tres preguntas. Ingresos extra al año, baja y alta. Si se suscribe, esto es el extra que estimamos.
 
 ## sim.revenue
 Facturación mensual, en euros
@@ -465,6 +465,9 @@ Envíe a Rosalia el nombre del negocio y la ficha de Google por WhatsApp o corre
 
 ## how.step2
 Invite a reviews@babyrock.ai como gestor de su ficha de empresa de Google. Nunca pedimos la contraseña del titular. Usted sigue al mando y puede quitarnos el acceso cuando quiera.
+
+## how.step2_video
+Cómo añadir reviews@babyrock.ai como administrador de Google
 
 ## how.step3_title
 3. Preparamos, revisamos y publicamos cada respuesta

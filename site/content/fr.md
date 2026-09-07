@@ -269,7 +269,7 @@ Kinésithérapie
 Club
 
 ## home.sim_title
-Si vous payez, combien gagnez-vous en plus ?
+Voyez combien vous pourriez gagner si vous vous abonnez
 
 ## home.sim_lead
 Extra annuel. Bas et haut, d’après les études que nous utilisons. Pas une promesse.
@@ -383,10 +383,10 @@ Vous gérez aussi le WhatsApp de mon commerce ?
 Pas encore. Ce sera BabyRock Direct : vos clients écrivent à votre numéro, pas au nôtre. Le WhatsApp que vous utilisez avec nous aujourd’hui est seulement le fil avec BabyRock Social, pour les avis délicats et le récapitulatif hebdomadaire.
 
 ## sim.headline
-Si vous payez, combien gagnez-vous en plus ?
+Voyez combien vous pourriez gagner si vous vous abonnez
 
 ## sim.lead
-Trois questions. Extra annuel, bas et haut. Si vous payez, voici l’extra que nous estimons.
+Trois questions. Extra annuel, bas et haut. Si vous vous abonnez, voici l’extra que nous estimons.
 
 ## sim.revenue
 Chiffre d’affaires mensuel, en euros
@@ -471,6 +471,9 @@ Envoyez à Rosalia le nom du commerce et la fiche Google par WhatsApp ou e-mail.
 
 ## how.step2
 Invitez reviews@babyrock.ai comme gestionnaire de votre fiche d’établissement Google. Nous ne demandons jamais le mot de passe du titulaire. Vous restez aux commandes et pouvez nous retirer l’accès quand vous voulez.
+
+## how.step2_video
+Comment ajouter reviews@babyrock.ai comme administrateur Google
 
 ## how.step3_title
 3. Nous préparons, relisons et publions chaque réponse
