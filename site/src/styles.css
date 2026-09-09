@@ -328,6 +328,30 @@ h3 {
 .prose p {
   margin: 0 0 1rem;
 }
+.legal-prose {
+  max-width: 44rem;
+}
+.legal-prose h1 {
+  margin: 0 0 1rem;
+}
+.legal-prose h2 {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  margin: 1.75rem 0 0.5rem;
+}
+.legal-prose ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+.legal-prose li {
+  margin: 0 0 0.35rem;
+}
+.legal-prose a {
+  text-decoration: underline;
+}
+.legal-prose strong {
+  font-weight: 600;
+}
 .lead {
   font-size: 1.05rem;
   color: var(--muted);

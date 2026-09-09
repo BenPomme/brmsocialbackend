@@ -1,6 +1,7 @@
 # Public website (babyrock.ai)
 
 Static site for GitHub Pages. The words live in `content/` so they can be changed without touching the layout.
+Legal pages (aviso, condiciones, privacidad, cookies, encargo) live in `../legal/{es,ca,fr,en}/` — Spanish is the legal original.
 
 ```
 content/en.md es.md ca.md fr.md   ← copy
@@ -27,7 +28,7 @@ npx --yes serve docs
 
 ## WhatsApp number
 
-`content/config.json` → `whatsapp` is digits only, country code, no `+`. Header, footer and the green floating button on every page open `wa.me` to Rosalia (no form). Production number is the UK Cloud API line, not the Meta 555 test number.
+`content/config.json` → `whatsapp` is digits only, country code, no `+`. Header, footer and the green floating button on every page open `wa.me` to Rosalia (no form). Production number is the Spanish Cloud API line `+34 711 52 09 44`, not the Meta 555 test number.
 
 ## Portraits
 

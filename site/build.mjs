@@ -26,6 +26,9 @@ const LOCALES = {
       account: "cuenta",
       privacy: "privacidad",
       terms: "condiciones",
+      legal: "aviso-legal",
+      cookies: "cookies",
+      dpa: "encargo",
     },
   },
   ca: {
@@ -43,6 +46,9 @@ const LOCALES = {
       account: "compte",
       privacy: "privadesa",
       terms: "condicions",
+      legal: "avis-legal",
+      cookies: "galetes",
+      dpa: "encarrec",
     },
   },
   fr: {
@@ -60,6 +66,9 @@ const LOCALES = {
       account: "compte",
       privacy: "confidentialite",
       terms: "conditions",
+      legal: "mentions-legales",
+      cookies: "cookies",
+      dpa: "accord-traitement",
     },
   },
   en: {
@@ -77,6 +86,9 @@ const LOCALES = {
       account: "account",
       privacy: "privacy",
       terms: "terms",
+      legal: "legal-notice",
+      cookies: "cookies",
+      dpa: "dpa",
     },
   },
 };
@@ -111,6 +123,53 @@ function paras(s) {
     .filter(Boolean)
     .map((p) => `<p>${esc(p).replaceAll("\n", "<br>")}</p>`)
     .join("\n");
+}
+
+function mdInline(s) {
+  return esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(
+      /\[([^\]]+)\]\((https?:\/\/[^)]+|mailto:[^)]+)\)/g,
+      '<a href="$2" rel="noopener">$1</a>',
+    );
+}
+
+function legalBody(s) {
+  return String(s || "")
+    .split(/\n\s*\n/)
+    .filter(Boolean)
+    .map((block) => {
+      const lines = block.split("\n");
+      const first = lines[0] ?? "";
+      if (first.startsWith("# ")) {
+        const rest = lines.slice(1).join("\n").trim();
+        return `<h1>${mdInline(first.slice(2))}</h1>${rest ? `<p>${mdInline(rest)}</p>` : ""}`;
+      }
+      if (first.startsWith("## ")) {
+        const rest = lines.slice(1).join("\n").trim();
+        return `<h2>${mdInline(first.slice(3))}</h2>${rest ? `<p>${mdInline(rest)}</p>` : ""}`;
+      }
+      if (lines.every((l) => l.trim().startsWith("- "))) {
+        return `<ul>${lines.map((l) => `<li>${mdInline(l.replace(/^\s*-\s+/, ""))}</li>`).join("")}</ul>`;
+      }
+      return `<p>${mdInline(block)}</p>`;
+    })
+    .join("\n");
+}
+
+const LEGAL_FILES = {
+  legal: "aviso.md",
+  terms: "condiciones.md",
+  privacy: "privacidad.md",
+  cookies: "cookies.md",
+  dpa: "encargo.md",
+};
+
+function loadLegalMarkdown(locale, page) {
+  const file = LEGAL_FILES[page];
+  if (!file) return "";
+  const path = join(root, "..", "legal", locale, file);
+  return existsSync(path) ? readFileSync(path, "utf8") : "";
 }
 
 function homeLead(s) {
@@ -189,13 +248,17 @@ function hreflangLinks(page, absHrefFor) {
 function jsonLd(locale, page, copy, config, extraGraph) {
   const org = {
     "@type": ["Organization", "LocalBusiness"],
-    name: "BabyRock",
+    name: config.legalName || "BabyRock",
+    alternateName: "BabyRock",
     url: SITE + "/",
-    email: config.email,
+    email: config.privacyEmail || config.email,
+    vatID: config.vatId || undefined,
     image: `${SITE}/assets/og.jpg`,
     address: {
       "@type": "PostalAddress",
+      streetAddress: config.streetAddress || undefined,
       addressLocality: "Sant Cugat del Vallès",
+      postalCode: config.postalCode || undefined,
       addressCountry: "ES",
     },
   };
@@ -366,7 +429,7 @@ function gaSnippet(config) {
 function consentBanner(copy, locale, depth) {
   return `<div class="cookie-banner" data-cookie-banner hidden>
     <h2>${esc(t(copy, "cookies.title"))}</h2>
-    <p>${esc(t(copy, "cookies.body"))} <a href="${href(locale, "privacy", depth)}">${esc(t(copy, "footer.privacy"))}</a>.</p>
+    <p>${esc(t(copy, "cookies.body"))} <a href="${href(locale, "cookies", depth)}">${esc(t(copy, "footer.cookies"))}</a>.</p>
     <div class="cookie-actions">
       <button type="button" class="btn btn-coral" data-cookie-accept>${esc(t(copy, "cookies.accept"))}</button>
       <button type="button" class="btn btn-ghost" data-cookie-refuse>${esc(t(copy, "cookies.refuse"))}</button>
@@ -462,11 +525,13 @@ ${hreflangLinks(page, hreflangAbs)}
       <div>
         <p><a href="${href(locale, "subscribe", depth)}">${esc(t(copy, "nav.subscribe"))}</a></p>
         <p><a href="${href(locale, "account", depth)}">${esc(t(copy, "nav.account"))}</a></p>
+        <p><a href="${href(locale, "legal", depth)}">${esc(t(copy, "footer.legal"))}</a></p>
         <p><a href="${href(locale, "privacy", depth)}">${esc(t(copy, "footer.privacy"))}</a></p>
         <p><a href="${href(locale, "terms", depth)}">${esc(t(copy, "footer.terms"))}</a></p>
-        <p><a href="${href(locale, "privacy", depth)}" data-cookie-open>${esc(t(copy, "footer.cookies"))}</a></p>
+        <p><a href="${href(locale, "cookies", depth)}">${esc(t(copy, "footer.cookies"))}</a></p>
+        <p><a href="${href(locale, "dpa", depth)}">${esc(t(copy, "footer.dpa"))}</a></p>
         <p><a href="${wa}" target="_blank" rel="noopener">${esc(t(copy, "nav.whatsapp"))} · Rosalia</a></p>
-        <p><a href="mailto:${esc(config.email)}">${esc(config.email)}</a></p>
+        <p><a href="mailto:${esc(config.privacyEmail || "contact@babyrock.ai")}">${esc(config.privacyEmail || "contact@babyrock.ai")}</a></p>
       </div>
     </div>
   </footer>
@@ -961,8 +1026,18 @@ function accountPage(locale, copy, config, depth) {
   </section>`;
 }
 
-function legalPage(copy, headKey, bodyKey) {
-  return `<section class="wrap section prose"><h1>${esc(t(copy, headKey))}</h1>${paras(t(copy, bodyKey))}</section>`;
+function legalPage(locale, page, copy) {
+  const md = loadLegalMarkdown(locale, page);
+  const manage =
+    page === "cookies"
+      ? `<p><button type="button" class="btn btn-ghost" data-cookie-open>${esc(t(copy, "cookies.manage") || t(copy, "footer.cookies"))}</button></p>`
+      : "";
+  if (md) {
+    return `<section class="wrap section prose legal-prose">${legalBody(md)}${manage}</section>`;
+  }
+  const headKey = page === "legal" ? "legal.headline" : `${page}.headline`;
+  const bodyKey = page === "legal" ? "legal.body" : `${page}.body`;
+  return `<section class="wrap section prose"><h1>${esc(t(copy, headKey))}</h1>${paras(t(copy, bodyKey))}${manage}</section>`;
 }
 
 function write(path, content) {
@@ -1002,7 +1077,7 @@ writeFileSync(
   join(outDir, "robots.txt"),
   `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`
 );
-const indexable = ["home", "services", "guides", "simulator", "how", "research", "about", "subscribe", "privacy", "terms"];
+const indexable = ["home", "services", "guides", "simulator", "how", "research", "about", "subscribe", "privacy", "terms", "legal", "cookies", "dpa"];
 const sitemapUrls = Object.keys(LOCALES).flatMap((locale) => [
   ...indexable.map((page) => `  <url><loc>${absUrl(locale, page)}</loc></url>`),
   ...GUIDES.map((g) => `  <url><loc>${absGuideUrl(locale, g.id)}</loc></url>`),
@@ -1024,8 +1099,11 @@ for (const locale of Object.keys(LOCALES)) {
     about: { depth: 2, body: aboutPage(copy, 2) },
     subscribe: { depth: 2, body: subscribePage(locale, copy, config, 2) },
     account: { depth: 2, body: accountPage(locale, copy, config, 2) },
-    privacy: { depth: 2, body: legalPage(copy, "privacy.headline", "privacy.body") },
-    terms: { depth: 2, body: legalPage(copy, "terms.headline", "terms.body") },
+    privacy: { depth: 2, body: legalPage(locale, "privacy", copy) },
+    terms: { depth: 2, body: legalPage(locale, "terms", copy) },
+    legal: { depth: 2, body: legalPage(locale, "legal", copy) },
+    cookies: { depth: 2, body: legalPage(locale, "cookies", copy) },
+    dpa: { depth: 2, body: legalPage(locale, "dpa", copy) },
   };
   for (const [page, meta] of Object.entries(pages)) {
     write(
@@ -1036,7 +1114,11 @@ for (const locale of Object.keys(LOCALES)) {
         copy,
         config,
         depth: meta.depth,
-        title: page === "services" ? `${t(copy, "product.social_name")} · ${t(copy, "product.direct_name")} | BabyRock` : t(copy, "meta.title"),
+        title: page === "services"
+          ? `${t(copy, "product.social_name")} · ${t(copy, "product.direct_name")} | BabyRock`
+          : ({ legal: "footer.legal", terms: "footer.terms", privacy: "footer.privacy", cookies: "footer.cookies", dpa: "footer.dpa" }[page]
+            ? `${t(copy, { legal: "footer.legal", terms: "footer.terms", privacy: "footer.privacy", cookies: "footer.cookies", dpa: "footer.dpa" }[page])} | BabyRock`
+            : t(copy, "meta.title")),
         description: page === "services" ? t(copy, "products.lead").split(/\n\s*\n/)[0] : t(copy, "meta.description"),
         body: meta.body,
       })

@@ -53,7 +53,16 @@ Privadesa
 Condicions
 
 ## footer.cookies
-Cookies
+Galetes
+
+## footer.legal
+Avís legal
+
+## footer.dpa
+Encàrrec de tractament
+
+## cookies.manage
+Canviar la vostra elecció
 
 ## footer.city
 Sant Cugat del Vallès

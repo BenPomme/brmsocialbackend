@@ -8,6 +8,7 @@ site
 sessions
 .env
 *.md
+!legal/**
 research
 scripts
 **/*.test.ts
