@@ -89,7 +89,7 @@ BabyRock Social helps you reply to every new review on your Google Profile. A hu
 BabyRock Direct helps you use WhatsApp to build lasting direct relationships with your customers and improve your business efficiency. From taking bookings, reducing no-shows, taking orders without paying a commission, or asking for reviews, we’re with you on your journey to grow.
 
 ## home.cta_sim
-See what you could make
+Impact Simulator
 
 ## home.cta_sub
 Send us an email

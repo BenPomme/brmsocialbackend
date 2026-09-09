@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, readFileSync, writeFileSync, cpSync, existsSync, unlinkSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync, cpSync, existsSync, unlinkSync, copyFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -381,6 +381,14 @@ function trustBar(copy, config) {
   return `<div class="trust-wrap"><p class="wrap trust-bar" data-trust-ticker data-trust-base="${n}">${html}</p></div>`;
 }
 
+function faviconLinks(depth) {
+  const root = depth ? "../".repeat(depth) : "./";
+  return `  <link rel="icon" href="${root}favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="${asset(depth, "favicon-48.png")}">
+  <link rel="icon" type="image/png" sizes="192x192" href="${asset(depth, "favicon-192.png")}">
+  <link rel="apple-touch-icon" href="${root}apple-touch-icon.png">`;
+}
+
 function shell({ locale, page, copy, config, depth, title, description, body, langHref, canonicalUrl, hreflangAbs, extraGraph, ogType }) {
   const { css, js } = cssJs(depth);
   const navHtml = nav(locale, page, copy, depth, config);
@@ -397,6 +405,7 @@ function shell({ locale, page, copy, config, depth, title, description, body, la
   <meta name="description" content="${esc(description)}">
   <meta name="robots" content="${robots}">
   <link rel="canonical" href="${canonical}">
+${faviconLinks(depth)}
 ${hreflangLinks(page, hreflangAbs)}
   <meta property="og:type" content="${esc(ogType || "website")}">
   <meta property="og:site_name" content="BabyRock Social">
@@ -420,7 +429,7 @@ ${hreflangLinks(page, hreflangAbs)}
   <a class="skip" href="#main">${esc(t(copy, "nav.skip") || "Skip")}</a>
   <header class="site-header">
     <div class="wrap header-inner">
-      <a class="logo" href="${href(locale, "home", depth)}">BabyRock</a>
+      <a class="logo" href="${href(locale, "home", depth)}"><img class="logo-mark" src="${asset(depth, "favicon-192.png")}" alt="" width="28" height="28">BabyRock</a>
       <nav class="nav-links">${navHtml}</nav>
       <div class="header-actions">
         <div class="lang">${langSwitcher(locale, page, depth, langHref)}</div>
@@ -982,6 +991,10 @@ if (existsSync(assetDir)) {
       unlinkSync(p);
     } catch {}
   }
+  for (const f of ["favicon.ico", "apple-touch-icon.png"]) {
+    const src = join(assetDir, f);
+    if (existsSync(src)) copyFileSync(src, join(outDir, f));
+  }
 }
 writeFileSync(join(outDir, "CNAME"), "www.babyrock.ai\n");
 writeFileSync(join(outDir, ".nojekyll"), "");
@@ -1062,6 +1075,10 @@ write(
   <meta charset="utf-8">
   <title>BabyRock Social</title>
   <meta name="description" content="Thoughtful Google review replies for small businesses. From €99/month.">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="canonical" href="${SITE}/en/">
   <link rel="alternate" hreflang="en" href="${SITE}/en/">
   <link rel="alternate" hreflang="es" href="${SITE}/es/">

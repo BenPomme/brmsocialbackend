@@ -95,7 +95,7 @@ Faites de WhatsApp Business un canal direct avec vos clients. Gérez vos réserv
 Moins de temps passé à gérer les échanges. Plus de temps pour vos clients et votre activité.
 
 ## home.cta_sim
-Voir ce que vous pourriez gagner
+Simulateur d’impact
 
 ## home.cta_sub
 Envoyez-nous un e-mail

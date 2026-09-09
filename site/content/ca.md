@@ -89,7 +89,7 @@ BabyRock Social us ajuda a respondre a cada ressenya nova al vostre perfil de Go
 BabyRock Direct us ajuda a fer servir WhatsApp per construir relacions directes i duradores amb els vostres clients i a millorar l’eficiència del negoci. Des de prendre reserves, reduir les inassistències, prendre comandes sense pagar comissió o demanar ressenyes, anem amb vosaltres en el camí de créixer.
 
 ## home.cta_sim
-Vegeu el que podríeu guanyar
+Simulador d’impacte
 
 ## home.cta_sub
 Envieu-nos un correu
